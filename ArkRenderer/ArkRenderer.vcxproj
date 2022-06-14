@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -143,6 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,6 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -174,14 +176,28 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Core\ArkEngine.cpp" />
+    <ClCompile Include="src\Core\RenderSystem.cpp" />
     <ClCompile Include="src\3rdparty\format.cc" />
     <ClCompile Include="src\3rdparty\glad.c" />
     <ClCompile Include="src\3rdparty\stb_image.cpp" />
-    <ClCompile Include="src\Graphics\GLShaderProgramcpp.cpp" />
+    <ClCompile Include="src\Core\ResourceManager.cpp" />
+    <ClCompile Include="src\Core\WindowSystem.cpp" />
+    <ClCompile Include="src\Graphics\GLShaderProgram.cpp" />
+    <ClCompile Include="src\Graphics\GLShaderProgramFactory.cpp" />
+    <ClCompile Include="src\Graphics\GLVertexArray.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\ArkEngine.h" />
+    <ClInclude Include="src\Core\RenderSystem.h" />
+    <ClInclude Include="src\Core\ResourceManager.h" />
+    <ClInclude Include="src\Core\WindowSystem.h" />
     <ClInclude Include="src\Graphics\GLShaderProgram.h" />
+    <ClInclude Include="src\Graphics\GLShaderProgramFactory.h" />
+    <ClInclude Include="src\Graphics\GLVertexArray.h" />
+    <ClInclude Include="src\Graphics\ShaderStage.h" />
+    <ClInclude Include="src\Input.h" />
     <ClInclude Include="src\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{8b8aea1e-c1ce-45c4-bbe8-2743f4d934ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{e5fbfa95-57d7-4609-948c-a79143f5fdef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -24,10 +30,28 @@
     <ClCompile Include="src\3rdparty\format.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\ResourceManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="src\3rdparty\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics\GLShaderProgramcpp.cpp">
+    <ClCompile Include="src\Graphics\GLShaderProgram.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GLShaderProgramFactory.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\GLVertexArray.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\RenderSystem.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\WindowSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\ArkEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +59,31 @@
     <ClInclude Include="src\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Core\ResourceManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\ShaderStage.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="src\Graphics\GLShaderProgram.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GLShaderProgramFactory.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\RenderSystem.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GLVertexArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\WindowSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\ArkEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
