@@ -1,6 +1,8 @@
 #include "ArkEngine.h"
 #include <iostream>
 #include "../Input.h"
+#include <GLFW/glfw3.h>
+
 void ConnectToInput(GLFWwindow* window)
 {
 	const auto resizeCallback = [](GLFWwindow* w, auto width, auto height) {
@@ -32,14 +34,22 @@ ArkEngine::ArkEngine()
 	std::cout << "**************************************************\n";
 	std::cout << "Initializing Window...\n";
 	ConnectToInput(window);
+	m_renderer.Init();
 }
 
 void ArkEngine::Execute()
 {
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
 	while (!m_window.ShouldClose())
 	{
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
 		Input::GetInstance().Update();
 		m_window.Update();
+		m_camera.Update(deltaTime);
+		m_renderer.Render(m_camera);
 		m_window.SwapBuffers();
 	}
 	Shutdown();

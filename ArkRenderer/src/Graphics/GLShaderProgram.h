@@ -16,16 +16,13 @@ private:
 public:
 	GLShaderProgram(const std::string& programName, const GLuint programId);
 	~GLShaderProgram();
-
+	GLuint GetProgramId() const { return m_programId; }
 	GLShaderProgram(GLShaderProgram&& other) noexcept
 	{
-		m_uniforms = other.m_uniforms;
+		m_uniforms = std::move(other.m_uniforms);
 		m_programId = other.m_programId;
-		m_programName = other.m_programName;
-
-		other.m_uniforms.clear();
+		m_programName = std::move(other.m_programName);
 		other.m_programId = 0;
-		other.m_programName.clear();
 	}
 
 	GLShaderProgram& operator=(GLShaderProgram&& other) noexcept
@@ -69,5 +66,5 @@ public:
 	GLShaderProgram& SetUniform(const std::string& uniformName,
 	                            const glm::mat4x4& value);
 
-	auto GetProgramName() const noexcept { return m_programName; }
+	[[nodiscard]] auto GetProgramName() const noexcept { return m_programName; }
 };

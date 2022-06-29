@@ -1,6 +1,6 @@
 #include "Core/ArkEngine.h"
 int main()
 {
-	ArkEngine engine{};
+	ArkEngine engine;
 	engine.Execute();
 }

@@ -16,8 +16,8 @@ namespace Graphics
 	{
 		ShaderStage() noexcept = default;
 
-		ShaderStage(std::string& path, std::string& type) :
-			m_filePath(std::move(path)), m_type(std::move(type))
+		ShaderStage(const std::string& path, const std::string& type) :
+			m_filePath(path), m_type(type)
 		{
 		}
 

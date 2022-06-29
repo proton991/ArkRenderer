@@ -1,11 +1,13 @@
 #pragma once
-#include <GLFW/glfw3.h>
+struct GLFWwindow;	// use forward declaration
+
 class WindowSystem
 {
 public:
 	WindowSystem() noexcept = default;
 	WindowSystem(WindowSystem&&) = default;
 	WindowSystem& operator=(WindowSystem&&) = default;
+	~WindowSystem() = default;
 	// Disable Copying
 	WindowSystem(const WindowSystem&) = delete;
 	WindowSystem& operator=(const WindowSystem&) = delete;

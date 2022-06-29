@@ -7,6 +7,10 @@ GLShaderProgram::GLShaderProgram(const std::string& programName,
 	m_programId(programID), m_programName(programName)
 {
 	GetUniforms();
+	for (auto it = m_uniforms.cbegin(); it != m_uniforms.cend(); ++it)
+	{
+		std::cout << it->first << " " << it->second << "\n";
+	}
 }
 
 void GLShaderProgram::GetUniforms()

@@ -7,7 +7,7 @@ struct Vertex
 	using Vec2 = glm::vec2;
 	using Vec3 = glm::vec3;
 	Vec3 m_position;
-	Vec3 m_texCoords;
+	Vec2 m_texCoords;
 	Vec3 m_normal;
 	Vec3 m_tangent;
 	Vertex() = default;
@@ -17,7 +17,10 @@ struct Vertex
 	Vertex(const Vec3& position, const Vec3& texCoords, const Vec3& normal)
 		: m_position(position), m_texCoords(texCoords), m_normal(normal)
 	{}
-	Vertex(const Vec3& position, const Vec3& texCoords)
+	Vertex(const Vec3& position, const Vec2& texCoords)
 		: m_position(position), m_texCoords(texCoords)
+	{}
+	Vertex(const Vec3& position)
+		: m_position(position)
 	{}
 };

@@ -1,7 +1,7 @@
 #include "WindowSystem.h"
 #include <iostream>
 #include "../Input.h"
-
+#include <GLFW/glfw3.h>
 GLFWwindow* WindowSystem::Init()
 {
 	const int width = 1024;
