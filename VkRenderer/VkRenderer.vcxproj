@@ -116,6 +116,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,9 @@
     <PostBuildEvent>
       <Command>copy $(SolutionDir)dlls\*.dll $(OutDir)</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(ProjectDir)scripts\build_shaders.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -134,6 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,11 +150,44 @@
     <PostBuildEvent>
       <Command>copy $(SolutionDir)dlls\*.dll $(OutDir)</Command>
     </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>call "$(ProjectDir)scripts\build_shaders.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\FirstApp.cpp" />
+    <ClCompile Include="src\ArkDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\ArkPipleline.cpp" />
+    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\ArkSwapChain.cpp" />
+    <ClCompile Include="src\WindowSystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scripts\build_shaders.bat" />
+    <CustomBuild Include="shaders\triangle.frag">
+      <FileType>Document</FileType>
+    </CustomBuild>
+    <CustomBuild Include="shaders\triangle.vert">
+      <FileType>Document</FileType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\FirstApp.hpp" />
+    <ClInclude Include="src\ArkDevice.hpp" />
+    <ClInclude Include="src\ArkPipleline.hpp" />
+    <ClInclude Include="src\ResourceManager.hpp" />
+    <ClInclude Include="src\ArkSwapChain.hpp" />
+    <ClInclude Include="src\WindowSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <Target Name="CustomClean" BeforeTargets="CoreClean">
+    <Message Text="Clean up compiled spv shaders" Importance="high" />
+    <ItemGroup>
+      <_ShaderFilesToDelete Include="$(ProjectDir)shaders\*.spv" />
+    </ItemGroup>
+    <Delete Files="@(_ShaderFilesToDelete)" />
+  </Target>
 </Project>
