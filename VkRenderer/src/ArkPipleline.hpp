@@ -6,8 +6,8 @@ namespace Ark
 {
 	struct PipelineConfigInfo
 	{
-		VkViewport viewport;
-		VkRect2D scissor;
+		//VkViewport viewport;
+		//VkRect2D scissor;
 		VkPipelineViewportStateCreateInfo viewportInfo;
 		VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo;
 		VkPipelineRasterizationStateCreateInfo rasterizationInfo;
@@ -15,6 +15,8 @@ namespace Ark
 		VkPipelineColorBlendAttachmentState colorBlendAttachment;
 		VkPipelineColorBlendStateCreateInfo colorBlendInfo;
 		VkPipelineDepthStencilStateCreateInfo depthStencilInfo;
+		std::vector<VkDynamicState> dynamicStatesEnables;
+		VkPipelineDynamicStateCreateInfo dynamicStateInfo;
 		VkPipelineLayout pipelineLayout = nullptr;
 		VkRenderPass renderPass = nullptr;
 		uint32_t subpass = 0;
@@ -35,8 +37,7 @@ namespace Ark
 		ArkPipeline& operator=(const ArkPipeline&) = delete;
 		void Bind(VkCommandBuffer commandBuffer);
 		static void DefaultPipelineConfigInfo(
-			PipelineConfigInfo& configInfo,
-			uint32_t width, uint32_t height);
+			PipelineConfigInfo& configInfo);
 	private:
 		ArkDevice& m_arkDevice;
 		VkPipeline m_graphicsPipeline;

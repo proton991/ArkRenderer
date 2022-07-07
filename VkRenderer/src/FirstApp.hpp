@@ -19,6 +19,8 @@ namespace Ark
 		FirstApp& operator=(const FirstApp&) = delete;
 		void Run();
 	private:
+		void RecreateSwapChain();
+		void RecordCommandBuffer(int imageIndex);
 		void Sierpinski(std::vector<ArkModel::Vertex>& vertices,
 			int depth,
 			glm::vec2 left,
@@ -28,11 +30,11 @@ namespace Ark
 		void CreatePipelineLayout();
 		void CreatePipeline();
 		void CreateCommandBuffers();
+		void FreeCommandBuffers();
 		void DrawFrame();
 		WindowSystem m_window{ WIDTH, HEIGHT, "Hello Vulkan!" };
 		ArkDevice m_arkDevice{ m_window };
-		ArkSwapChain m_arkSwapChain{ m_arkDevice, m_window.GetExtent() };
-		//ArkPipeline arkPipeline{ m_arkDevice, "shaders/triangle.vert.spv", "shaders/triangle.frag.spv", ArkPipeline::DefaultPipelineConfigInfo(WIDTH, HEIGHT) };
+		std::unique_ptr<ArkSwapChain> m_arkSwapChain;
 		std::unique_ptr<ArkPipeline> m_arkPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;

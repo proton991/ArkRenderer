@@ -15,9 +15,11 @@ namespace Ark
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 		m_window = glfwCreateWindow(m_width, m_height, m_windowName.c_str(),
 		                            nullptr, nullptr);
+		glfwSetWindowUserPointer(m_window, this);
+		glfwSetFramebufferSizeCallback(m_window, FrameBufferResizedCallback);
 	}
 
 	WindowSystem::~WindowSystem()
@@ -34,5 +36,15 @@ namespace Ark
 		{
 			throw std::runtime_error("failed to create window surface!");
 		}
+	}
+
+	void WindowSystem::FrameBufferResizedCallback(
+		GLFWwindow* window, int width, int height)
+	{
+		auto arkWindow = reinterpret_cast<WindowSystem*>(
+			glfwGetWindowUserPointer(window));
+		arkWindow->m_frameBufferResized = true;
+		arkWindow->m_width = width;
+		arkWindow->m_height = height;
 	}
 }

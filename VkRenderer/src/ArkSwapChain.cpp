@@ -15,6 +15,20 @@ namespace Ark
 	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent)
 		: m_device{deviceRef}, m_windowExtent{extent}
 	{
+		Init();
+	}
+
+	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent,
+	                           std::shared_ptr<ArkSwapChain> previous)
+		: m_device{deviceRef}, m_windowExtent{extent}, m_oldSwapChain(previous)
+	{
+		Init();
+		// clean up old swap chain
+		m_oldSwapChain = nullptr;
+	}
+
+	void ArkSwapChain::Init()
+	{
 		CreateSwapChain();
 		CreateImageViews();
 		CreateRenderPass();
@@ -198,7 +212,9 @@ namespace Ark
 		createInfo.presentMode = presentMode;
 		createInfo.clipped = VK_TRUE;
 
-		createInfo.oldSwapchain = VK_NULL_HANDLE;
+		createInfo.oldSwapchain = m_oldSwapChain == nullptr
+			                          ? VK_NULL_HANDLE
+			                          : m_oldSwapChain->m_swapChain;
 
 		if (vkCreateSwapchainKHR(m_device.Device(), &createInfo, nullptr,
 		                         &m_swapChain) != VK_SUCCESS)
@@ -438,7 +454,7 @@ namespace Ark
 	{
 		for (const auto& availableFormat : availableFormats)
 		{
-			if (availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM &&
+			if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB &&
 				availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 			{
 				return availableFormat;
@@ -482,8 +498,13 @@ namespace Ark
 		else
 		{
 			VkExtent2D actualExtent = m_windowExtent;
-			actualExtent.width = std::clamp(actualExtent.width, capabilities.minImageExtent.width, capabilities.maxImageExtent.width);
-			actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
+			actualExtent.width = std::clamp(actualExtent.width,
+			                                capabilities.minImageExtent.width,
+			                                capabilities.maxImageExtent.width);
+			actualExtent.height = std::clamp(actualExtent.height,
+			                                 capabilities.minImageExtent.height,
+			                                 capabilities.maxImageExtent.
+			                                 height);
 			//actualExtent.width = std::max(
 			//	capabilities.minImageExtent.width,
 			//	std::min(capabilities.maxImageExtent.width,

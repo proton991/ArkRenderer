@@ -73,7 +73,8 @@ namespace Ark
 
 		if (enableValidationLayers)
 		{
-			DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+			DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger,
+			                              nullptr);
 		}
 
 		vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
@@ -215,7 +216,8 @@ namespace Ark
 			throw std::runtime_error("failed to create logical device!");
 		}
 
-		vkGetDeviceQueue(m_device, indices.m_graphicsFamily, 0, &m_graphicsQueue);
+		vkGetDeviceQueue(m_device, indices.m_graphicsFamily, 0,
+		                 &m_graphicsQueue);
 		vkGetDeviceQueue(m_device, indices.m_presentFamily, 0, &m_presentQueue);
 	}
 
@@ -478,7 +480,8 @@ namespace Ark
 		for (VkFormat format : candidates)
 		{
 			VkFormatProperties props;
-			vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
+			vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format,
+			                                    &props);
 
 			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures
 				& features) == features)

@@ -1,22 +1,25 @@
 #include "ResourceManager.hpp"
 #include <fstream>
-std::vector<char> ResourceManager::ReadTextFile(const std::filesystem::path& path) const
+
+std::vector<char> ResourceManager::ReadTextFile(
+	const std::filesystem::path& path) const
 {
-    // std::ios::ate seek to the end
-    std::ifstream file(path, std::ios::ate | std::ios::binary);
+	// std::ios::ate seek to the end
+	std::ifstream file(path, std::ios::ate | std::ios::binary);
 
-    if (!file.is_open()) {
-        throw std::runtime_error("failed to open file!");
-    }
+	if (!file.is_open())
+	{
+		throw std::runtime_error("failed to open file!");
+	}
 
-    const size_t fileSize = static_cast<size_t>(file.tellg());
-    
-    std::vector<char> buffer(fileSize);
+	const size_t fileSize = static_cast<size_t>(file.tellg());
 
-    file.seekg(0);
-    file.read(buffer.data(), fileSize);
+	std::vector<char> buffer(fileSize);
 
-    file.close();
+	file.seekg(0);
+	file.read(buffer.data(), fileSize);
 
-    return buffer;
+	file.close();
+
+	return buffer;
 }

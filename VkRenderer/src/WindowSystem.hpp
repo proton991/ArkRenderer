@@ -10,9 +10,11 @@ namespace Ark
 	{
 	private:
 		void Init();
-		const int m_width;
-		const int m_height;
-
+		static void FrameBufferResizedCallback(GLFWwindow* window, int width,
+		                                       int height);
+		int m_width;
+		int m_height;
+		bool m_frameBufferResized = false;
 		std::string m_windowName;
 		GLFWwindow* m_window;
 
@@ -32,5 +34,8 @@ namespace Ark
 				static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height)
 			};
 		}
+
+		bool WasWindowResized() const { return m_frameBufferResized; }
+		void ResetWindowResizedFlag() { m_frameBufferResized = false; }
 	};
 }

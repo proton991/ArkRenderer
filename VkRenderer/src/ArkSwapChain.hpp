@@ -8,6 +8,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace Ark
 {
@@ -17,6 +18,8 @@ namespace Ark
 		static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
 		ArkSwapChain(ArkDevice& deviceRef, VkExtent2D windowExtent);
+		ArkSwapChain(ArkDevice& deviceRef, VkExtent2D windowExtent,
+		             std::shared_ptr<ArkSwapChain> previous);
 		~ArkSwapChain();
 
 		ArkSwapChain(const ArkSwapChain&) = delete;
@@ -53,6 +56,7 @@ namespace Ark
 		                              uint32_t* imageIndex);
 
 	private:
+		void Init();
 		void CreateSwapChain();
 		void CreateImageViews();
 		void CreateDepthResources();
@@ -84,7 +88,7 @@ namespace Ark
 		VkExtent2D m_windowExtent;
 
 		VkSwapchainKHR m_swapChain;
-
+		std::shared_ptr<ArkSwapChain> m_oldSwapChain;
 		//  signal that an image has been acquired from the swapchain and is ready for rendering,
 		std::vector<VkSemaphore> m_imageAvailableSemaphores;
 		// signal that rendering has finished and presentation can happen

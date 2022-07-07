@@ -9,6 +9,7 @@
 // std
 #include <memory>
 #include <vector>
+
 namespace Ark
 {
 	class ArkModel
@@ -17,9 +18,13 @@ namespace Ark
 		struct Vertex
 		{
 			glm::vec2 position;
-			static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
-			static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
+			glm::vec3 color;
+			static std::vector<VkVertexInputBindingDescription>
+			GetBindingDescriptions();
+			static std::vector<VkVertexInputAttributeDescription>
+			GetAttributeDescriptions();
 		};
+
 		ArkModel(ArkDevice& device, const std::vector<Vertex>& vertices);
 		~ArkModel();
 		ArkModel(const ArkModel&) = delete;
@@ -35,4 +40,5 @@ namespace Ark
 		uint32_t m_vertexCount;
 	};
 }
+
 using ModelPtr = std::shared_ptr<Ark::ArkModel>;
