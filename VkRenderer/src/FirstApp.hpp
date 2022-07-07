@@ -3,6 +3,7 @@
 #include "ArkPipleline.hpp"
 #include "ArkDevice.hpp"
 #include "ArkSwapChain.hpp"
+#include "ArkModel.hpp"
 #include <memory>
 namespace Ark
 {
@@ -18,6 +19,12 @@ namespace Ark
 		FirstApp& operator=(const FirstApp&) = delete;
 		void Run();
 	private:
+		void Sierpinski(std::vector<ArkModel::Vertex>& vertices,
+			int depth,
+			glm::vec2 left,
+			glm::vec2 right,
+			glm::vec2 top);
+		void LoadModels();
 		void CreatePipelineLayout();
 		void CreatePipeline();
 		void CreateCommandBuffers();
@@ -29,6 +36,7 @@ namespace Ark
 		std::unique_ptr<ArkPipeline> m_arkPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;
+		ModelPtr m_arkModel;
 	};
 
 }

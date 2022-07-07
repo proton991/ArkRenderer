@@ -6,14 +6,18 @@ namespace Ark
 {
 	FirstApp::FirstApp()
 	{
+		LoadModels();
 		CreatePipelineLayout();
 		CreatePipeline();
 		CreateCommandBuffers();
 	}
+
 	FirstApp::~FirstApp()
 	{
-		vkDestroyPipelineLayout(m_arkDevice.Device(), m_pipelineLayout, nullptr);
+		vkDestroyPipelineLayout(m_arkDevice.Device(), m_pipelineLayout,
+		                        nullptr);
 	}
+
 	void FirstApp::CreateCommandBuffers()
 	{
 		m_commandBuffers.resize(m_arkSwapChain.ImageCount());
@@ -21,8 +25,10 @@ namespace Ark
 		allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocateInfo.commandPool = m_arkDevice.GetCommandPool();
-		allocateInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers.size());
-		if (vkAllocateCommandBuffers(m_arkDevice.Device(), &allocateInfo, m_commandBuffers.data()) != VK_SUCCESS)
+		allocateInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers
+			.size());
+		if (vkAllocateCommandBuffers(m_arkDevice.Device(), &allocateInfo,
+		                             m_commandBuffers.data()) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to allocate command buffers!");
 		}
@@ -30,27 +36,34 @@ namespace Ark
 		{
 			VkCommandBufferBeginInfo beginInfo{};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			if (vkBeginCommandBuffer(m_commandBuffers[i], &beginInfo) != VK_SUCCESS)
+			if (vkBeginCommandBuffer(m_commandBuffers[i], &beginInfo) !=
+				VK_SUCCESS)
 			{
-				throw std::runtime_error("failed to begin recording command buffers!");
+				throw std::runtime_error(
+					"failed to begin recording command buffers!");
 			}
 			VkRenderPassBeginInfo renderPassInfo{};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassInfo.renderPass = m_arkSwapChain.GetRenderPass();
 			renderPassInfo.framebuffer = m_arkSwapChain.GetFrameBuffer(i);
-			renderPassInfo.renderArea.offset = { 0, 0 };
-			renderPassInfo.renderArea.extent = m_arkSwapChain.GetSwapChainExtent();
+			renderPassInfo.renderArea.offset = {0, 0};
+			renderPassInfo.renderArea.extent = m_arkSwapChain.
+				GetSwapChainExtent();
 
 			std::array<VkClearValue, 2> clearValues{};
 			clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
-			clearValues[1].depthStencil = { 1.0f, 0 };
-			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+			clearValues[1].depthStencil = {1.0f, 0};
+			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.
+				size());
 			renderPassInfo.pClearValues = clearValues.data();
 
-			vkCmdBeginRenderPass(m_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(m_commandBuffers[i], &renderPassInfo,
+			                     VK_SUBPASS_CONTENTS_INLINE);
 
 			m_arkPipeline->Bind(m_commandBuffers[i]);
-			vkCmdDraw(m_commandBuffers[i], 3, 1, 0, 0);
+			//vkCmdDraw(m_commandBuffers[i], 3, 1, 0, 0);
+			m_arkModel->Bind(m_commandBuffers[i]);
+			m_arkModel->Draw(m_commandBuffers[i]);
 			vkCmdEndRenderPass(m_commandBuffers[i]);
 			if (vkEndCommandBuffer(m_commandBuffers[i]) != VK_SUCCESS)
 			{
@@ -58,6 +71,7 @@ namespace Ark
 			}
 		}
 	}
+
 	void FirstApp::DrawFrame()
 	{
 		uint32_t imageIndex;
@@ -66,7 +80,8 @@ namespace Ark
 		{
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
-		result = m_arkSwapChain.SubmitCommandBuffers(&m_commandBuffers[imageIndex], &imageIndex);
+		result = m_arkSwapChain.SubmitCommandBuffers(
+			&m_commandBuffers[imageIndex], &imageIndex);
 		if (result != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to represent swap chain image!");
@@ -111,5 +126,36 @@ namespace Ark
 		m_arkPipeline = std::make_unique<ArkPipeline>(
 			m_arkDevice, "shaders/triangle.vert.spv",
 			"shaders/triangle.frag.spv", pipelineConfig);
+	}
+
+	void FirstApp::Sierpinski(std::vector<ArkModel::Vertex>& vertices,
+		int depth,
+		glm::vec2 left,
+		glm::vec2 right,
+		glm::vec2 top) {
+		if (depth <= 0) {
+			vertices.push_back({ top });
+			vertices.push_back({ right });
+			vertices.push_back({ left });
+		}
+		else {
+			auto leftTop = 0.5f * (left + top);
+			auto rightTop = 0.5f * (right + top);
+			auto leftRight = 0.5f * (left + right);
+			Sierpinski(vertices, depth - 1, left, leftRight, leftTop);
+			Sierpinski(vertices, depth - 1, leftRight, right, rightTop);
+			Sierpinski(vertices, depth - 1, leftTop, rightTop, top);
+		}
+	}
+	void FirstApp::LoadModels()
+	{
+		//std::vector<ArkModel::Vertex> vertices{
+		//	{{0.0, -0.5}},
+		//	{{0.5, 0.5}},
+		//	{{-0.5, 0.5}},
+		//};
+		std::vector<ArkModel::Vertex> vertices{};
+		Sierpinski(vertices, 5, { -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, -0.5f });
+		m_arkModel = std::make_unique<ArkModel>(m_arkDevice, vertices);
 	}
 }

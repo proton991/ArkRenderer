@@ -85,9 +85,12 @@ namespace Ark
 
 		VkSwapchainKHR m_swapChain;
 
+		//  signal that an image has been acquired from the swapchain and is ready for rendering,
 		std::vector<VkSemaphore> m_imageAvailableSemaphores;
+		// signal that rendering has finished and presentation can happen
 		std::vector<VkSemaphore> m_renderFinishedSemaphores;
 		std::vector<VkFence> m_inFlightFences;
+		// a fence to make sure only one frame is rendering at a time.
 		std::vector<VkFence> m_imagesInFlight;
 		size_t m_currentFrame = 0;
 	};
