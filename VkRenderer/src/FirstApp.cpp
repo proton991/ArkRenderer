@@ -1,12 +1,26 @@
 #include "FirstApp.hpp"
+//libs
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include <glm/glm.hpp>
+#include <glm/gtc/constants.hpp>
+
+//std
 #include <array>
 #include <stdexcept>
 
 namespace Ark
 {
+	struct SimplePushConstantData
+	{
+		glm::mat2 transform{ 1.0f };
+		glm::vec2 offset;
+		alignas(16) glm::vec3 color;
+	};
+
 	FirstApp::FirstApp()
 	{
-		LoadModels();
+		LoadGameObjects();
 		CreatePipelineLayout();
 		RecreateSwapChain();
 		CreateCommandBuffers();
@@ -57,7 +71,7 @@ namespace Ark
 			GetSwapChainExtent();
 
 		std::array<VkClearValue, 2> clearValues{};
-		clearValues[0].color = {0.1f, 0.1f, 0.1f, 1.0f};
+		clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
 		clearValues[1].depthStencil = {1.0f, 0};
 		renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.
 			size());
@@ -78,14 +92,31 @@ namespace Ark
 		VkRect2D scissor{{0, 0}, m_arkSwapChain->GetSwapChainExtent()};
 		vkCmdSetViewport(m_commandBuffers[imageIndex], 0, 1, &viewport);
 		vkCmdSetScissor(m_commandBuffers[imageIndex], 0, 1, &scissor);
-		m_arkPipeline->Bind(m_commandBuffers[imageIndex]);
-		//vkCmdDraw(m_commandBuffers[i], 3, 1, 0, 0);
-		m_arkModel->Bind(m_commandBuffers[imageIndex]);
-		m_arkModel->Draw(m_commandBuffers[imageIndex]);
+
+		RenderGameObjects(m_commandBuffers[imageIndex]);
 		vkCmdEndRenderPass(m_commandBuffers[imageIndex]);
 		if (vkEndCommandBuffer(m_commandBuffers[imageIndex]) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to record command buffer!");
+		}
+	}
+
+	void FirstApp::RenderGameObjects(VkCommandBuffer commandBuffer)
+	{
+		m_arkPipeline->Bind(commandBuffer);
+		for (auto& obj: m_gameObjects)
+		{
+			obj.m_transform2d.rotation = glm::mod(obj.m_transform2d.rotation + 0.1f, 360.0f);
+			SimplePushConstantData push{};
+			push.offset = obj.m_transform2d.translation;
+			push.color = obj.m_color;
+			push.transform = obj.m_transform2d.Mat2();
+			vkCmdPushConstants(commandBuffer, m_pipelineLayout,
+				VK_SHADER_STAGE_VERTEX_BIT |
+				VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+				sizeof(SimplePushConstantData), &push);
+			obj.m_model->Bind(commandBuffer);
+			obj.m_model->Draw(commandBuffer);
 		}
 	}
 
@@ -169,13 +200,19 @@ namespace Ark
 
 	void FirstApp::CreatePipelineLayout()
 	{
+		VkPushConstantRange pushConstantRange{};
+		pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT |
+			VK_SHADER_STAGE_FRAGMENT_BIT;
+		pushConstantRange.offset = 0;
+		pushConstantRange.size = sizeof(SimplePushConstantData);
+
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 		pipelineLayoutInfo.sType =
 			VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		pipelineLayoutInfo.setLayoutCount = 0;
 		pipelineLayoutInfo.pSetLayouts = nullptr;
-		pipelineLayoutInfo.pushConstantRangeCount = 0;
-		pipelineLayoutInfo.pPushConstantRanges = nullptr;
+		pipelineLayoutInfo.pushConstantRangeCount = 1;
+		pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 		if (vkCreatePipelineLayout(m_arkDevice.Device(), &pipelineLayoutInfo,
 		                           nullptr, &m_pipelineLayout) != VK_SUCCESS)
 		{
@@ -222,7 +259,7 @@ namespace Ark
 		}
 	}
 
-	void FirstApp::LoadModels()
+	void FirstApp::LoadGameObjects()
 	{
 		std::vector<ArkModel::Vertex> vertices{
 			{{0.0, -0.5}, {1.0f, 0.0f, 0.0f}},
@@ -231,6 +268,13 @@ namespace Ark
 		};
 		//std::vector<ArkModel::Vertex> vertices{};
 		//Sierpinski(vertices, 5, { -0.5f, 0.5f }, { 0.5f, 0.5f }, { 0.0f, -0.5f });
-		m_arkModel = std::make_unique<ArkModel>(m_arkDevice, vertices);
+		auto arkModel = std::make_shared<ArkModel>(m_arkDevice, vertices);
+		auto triangle = ArkGameObject::Create();
+		triangle.m_model = arkModel;
+		triangle.m_color = { .1f, .8f, .1f };
+		triangle.m_transform2d.translation.x = .2f;
+		triangle.m_transform2d.scale = { 2.f, .5f };
+		triangle.m_transform2d.rotation = 90.0f;
+		m_gameObjects.push_back(std::move(triangle));
 	}
 }

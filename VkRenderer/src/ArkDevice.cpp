@@ -1,5 +1,4 @@
 #include "ArkDevice.hpp"
-
 // std headers
 #include <cstring>
 #include <iostream>

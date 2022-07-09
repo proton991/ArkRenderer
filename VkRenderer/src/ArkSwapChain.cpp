@@ -20,7 +20,7 @@ namespace Ark
 
 	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent,
 	                           std::shared_ptr<ArkSwapChain> previous)
-		: m_device{deviceRef}, m_windowExtent{extent}, m_oldSwapChain(previous)
+		: m_device{deviceRef}, m_windowExtent{extent}, m_oldSwapChain(std::move(previous))
 	{
 		Init();
 		// clean up old swap chain
@@ -469,9 +469,9 @@ namespace Ark
 	{
 		for (const auto& availablePresentMode : availablePresentModes)
 		{
-			if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR)
+			if (availablePresentMode == VK_PRESENT_MODE_FIFO_KHR)
 			{
-				std::cout << "Present mode: Mailbox" << std::endl;
+				std::cout << "Present mode: V-Sync" << std::endl;
 				return availablePresentMode;
 			}
 		}

@@ -1,9 +1,9 @@
 #pragma once
 #include "WindowSystem.hpp"
 #include "ArkPipleline.hpp"
+#include "ArkGameObject.hpp"
 #include "ArkDevice.hpp"
 #include "ArkSwapChain.hpp"
-#include "ArkModel.hpp"
 #include <memory>
 namespace Ark
 {
@@ -26,19 +26,20 @@ namespace Ark
 			glm::vec2 left,
 			glm::vec2 right,
 			glm::vec2 top);
-		void LoadModels();
+		void LoadGameObjects();
 		void CreatePipelineLayout();
 		void CreatePipeline();
 		void CreateCommandBuffers();
 		void FreeCommandBuffers();
 		void DrawFrame();
+		void RenderGameObjects(VkCommandBuffer commandBuffer);
 		WindowSystem m_window{ WIDTH, HEIGHT, "Hello Vulkan!" };
 		ArkDevice m_arkDevice{ m_window };
 		std::unique_ptr<ArkSwapChain> m_arkSwapChain;
 		std::unique_ptr<ArkPipeline> m_arkPipeline;
 		VkPipelineLayout m_pipelineLayout;
 		std::vector<VkCommandBuffer> m_commandBuffers;
-		ModelPtr m_arkModel;
+		std::vector<ArkGameObject> m_gameObjects;
 	};
 
 }
