@@ -156,12 +156,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ArkModel.cpp" />
+    <ClCompile Include="src\ArkRenderer.cpp" />
     <ClCompile Include="src\FirstApp.cpp" />
     <ClCompile Include="src\ArkDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\ArkPipleline.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\ArkSwapChain.cpp" />
+    <ClCompile Include="src\SimpleRenderSystem.cpp" />
     <ClCompile Include="src\WindowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,11 +178,13 @@
   <ItemGroup>
     <ClInclude Include="src\ArkGameObject.hpp" />
     <ClInclude Include="src\ArkModel.hpp" />
+    <ClInclude Include="src\ArkRenderer.hpp" />
     <ClInclude Include="src\FirstApp.hpp" />
     <ClInclude Include="src\ArkDevice.hpp" />
     <ClInclude Include="src\ArkPipleline.hpp" />
     <ClInclude Include="src\ResourceManager.hpp" />
     <ClInclude Include="src\ArkSwapChain.hpp" />
+    <ClInclude Include="src\SimpleRenderSystem.hpp" />
     <ClInclude Include="src\WindowSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

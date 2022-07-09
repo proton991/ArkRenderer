@@ -1,10 +1,10 @@
 #pragma once
 #include "WindowSystem.hpp"
-#include "ArkPipleline.hpp"
 #include "ArkGameObject.hpp"
 #include "ArkDevice.hpp"
-#include "ArkSwapChain.hpp"
+#include "ArkRenderer.hpp"
 #include <memory>
+
 namespace Ark
 {
 	class FirstApp
@@ -19,28 +19,16 @@ namespace Ark
 		FirstApp& operator=(const FirstApp&) = delete;
 		void Run();
 	private:
-		void RecreateSwapChain();
-		void RecordCommandBuffer(int imageIndex);
 		void Sierpinski(std::vector<ArkModel::Vertex>& vertices,
-			int depth,
-			glm::vec2 left,
-			glm::vec2 right,
-			glm::vec2 top);
+		                int depth,
+		                glm::vec2 left,
+		                glm::vec2 right,
+		                glm::vec2 top);
 		void LoadGameObjects();
-		void CreatePipelineLayout();
-		void CreatePipeline();
-		void CreateCommandBuffers();
-		void FreeCommandBuffers();
-		void DrawFrame();
-		void RenderGameObjects(VkCommandBuffer commandBuffer);
-		WindowSystem m_window{ WIDTH, HEIGHT, "Hello Vulkan!" };
-		ArkDevice m_arkDevice{ m_window };
-		std::unique_ptr<ArkSwapChain> m_arkSwapChain;
-		std::unique_ptr<ArkPipeline> m_arkPipeline;
-		VkPipelineLayout m_pipelineLayout;
-		std::vector<VkCommandBuffer> m_commandBuffers;
+		WindowSystem m_window{WIDTH, HEIGHT, "Hello Vulkan!"};
+		ArkDevice m_arkDevice{m_window};
+		ArkRenderer m_arkRenderer{m_window, m_arkDevice};
+
 		std::vector<ArkGameObject> m_gameObjects;
 	};
-
 }
-

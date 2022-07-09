@@ -55,6 +55,12 @@ namespace Ark
 		VkResult SubmitCommandBuffers(const VkCommandBuffer* buffers,
 		                              uint32_t* imageIndex);
 
+		bool CompareSwapChainFormats(const ArkSwapChain& swapChain) const
+		{
+			return swapChain.m_swapChainImageFormat == m_swapChainImageFormat &&
+				swapChain.m_swapChainDepthFormat == m_swapChainDepthFormat;
+		}
+
 	private:
 		void Init();
 		void CreateSwapChain();
@@ -73,6 +79,7 @@ namespace Ark
 			const VkSurfaceCapabilitiesKHR& capabilities);
 
 		VkFormat m_swapChainImageFormat;
+		VkFormat m_swapChainDepthFormat;
 		VkExtent2D m_swapChainExtent;
 
 		std::vector<VkFramebuffer> m_swapChainFrameBuffers;

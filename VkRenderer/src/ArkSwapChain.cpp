@@ -20,7 +20,8 @@ namespace Ark
 
 	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent,
 	                           std::shared_ptr<ArkSwapChain> previous)
-		: m_device{deviceRef}, m_windowExtent{extent}, m_oldSwapChain(std::move(previous))
+		: m_device{deviceRef}, m_windowExtent{extent},
+		  m_oldSwapChain(std::move(previous))
 	{
 		Init();
 		// clean up old swap chain
@@ -368,6 +369,7 @@ namespace Ark
 	void ArkSwapChain::CreateDepthResources()
 	{
 		VkFormat depthFormat = FindDepthFormat();
+		m_swapChainDepthFormat = depthFormat;
 		VkExtent2D swapChainExtent = GetSwapChainExtent();
 
 		m_depthImages.resize(ImageCount());
