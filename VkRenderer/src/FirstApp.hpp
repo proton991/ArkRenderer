@@ -19,11 +19,6 @@ namespace Ark
 		FirstApp& operator=(const FirstApp&) = delete;
 		void Run();
 	private:
-		void Sierpinski(std::vector<ArkModel::Vertex>& vertices,
-		                int depth,
-		                glm::vec2 left,
-		                glm::vec2 right,
-		                glm::vec2 top);
 		void LoadGameObjects();
 		WindowSystem m_window{WIDTH, HEIGHT, "Hello Vulkan!"};
 		ArkDevice m_arkDevice{m_window};

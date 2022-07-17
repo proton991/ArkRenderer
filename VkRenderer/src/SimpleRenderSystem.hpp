@@ -1,4 +1,6 @@
 #pragma once
+
+#include "ArkCamera.hpp"
 #include "ArkPipleline.hpp"
 #include "ArkGameObject.hpp"
 #include "ArkDevice.hpp"
@@ -15,7 +17,9 @@ namespace Ark
 		SimpleRenderSystem(const SimpleRenderSystem&) = delete;
 		SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
 		void RenderGameObjects(VkCommandBuffer commandBuffer,
-		                       std::vector<ArkGameObject>& gameObjects);
+		                       std::vector<ArkGameObject>& gameObjects,
+		                       const ArkCamera& camera);
+
 	private:
 		void CreatePipelineLayout();
 		void CreatePipeline(VkRenderPass renderPass);

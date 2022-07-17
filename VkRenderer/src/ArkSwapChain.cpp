@@ -13,14 +13,14 @@
 namespace Ark
 {
 	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent)
-		: m_device{deviceRef}, m_windowExtent{extent}
+		: m_arkDevice{deviceRef}, m_windowExtent{extent}
 	{
 		Init();
 	}
 
 	ArkSwapChain::ArkSwapChain(ArkDevice& deviceRef, VkExtent2D extent,
 	                           std::shared_ptr<ArkSwapChain> previous)
-		: m_device{deviceRef}, m_windowExtent{extent},
+		: m_arkDevice{deviceRef}, m_windowExtent{extent},
 		  m_oldSwapChain(std::move(previous))
 	{
 		Init();
@@ -42,53 +42,53 @@ namespace Ark
 	{
 		for (auto imageView : m_swapChainImageViews)
 		{
-			vkDestroyImageView(m_device.Device(), imageView, nullptr);
+			vkDestroyImageView(m_arkDevice.Device(), imageView, nullptr);
 		}
 		m_swapChainImageViews.clear();
 
 		if (m_swapChain != nullptr)
 		{
-			vkDestroySwapchainKHR(m_device.Device(), m_swapChain, nullptr);
+			vkDestroySwapchainKHR(m_arkDevice.Device(), m_swapChain, nullptr);
 			m_swapChain = nullptr;
 		}
 
 		for (int i = 0; i < m_depthImages.size(); i++)
 		{
-			vkDestroyImageView(m_device.Device(), m_depthImageViews[i],
+			vkDestroyImageView(m_arkDevice.Device(), m_depthImageViews[i],
 			                   nullptr);
-			vkDestroyImage(m_device.Device(), m_depthImages[i], nullptr);
-			vkFreeMemory(m_device.Device(), m_depthImageMemorys[i], nullptr);
+			vkDestroyImage(m_arkDevice.Device(), m_depthImages[i], nullptr);
+			vkFreeMemory(m_arkDevice.Device(), m_depthImageMemorys[i], nullptr);
 		}
 
 		for (auto framebuffer : m_swapChainFrameBuffers)
 		{
-			vkDestroyFramebuffer(m_device.Device(), framebuffer, nullptr);
+			vkDestroyFramebuffer(m_arkDevice.Device(), framebuffer, nullptr);
 		}
 
-		vkDestroyRenderPass(m_device.Device(), m_renderPass, nullptr);
+		vkDestroyRenderPass(m_arkDevice.Device(), m_renderPass, nullptr);
 
 		// cleanup synchronization objects
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			vkDestroySemaphore(m_device.Device(), m_renderFinishedSemaphores[i],
+			vkDestroySemaphore(m_arkDevice.Device(), m_renderFinishedSemaphores[i],
 			                   nullptr);
-			vkDestroySemaphore(m_device.Device(), m_imageAvailableSemaphores[i],
+			vkDestroySemaphore(m_arkDevice.Device(), m_imageAvailableSemaphores[i],
 			                   nullptr);
-			vkDestroyFence(m_device.Device(), m_inFlightFences[i], nullptr);
+			vkDestroyFence(m_arkDevice.Device(), m_inFlightFences[i], nullptr);
 		}
 	}
 
 	VkResult ArkSwapChain::AcquireNextImage(uint32_t* imageIndex)
 	{
 		vkWaitForFences(
-			m_device.Device(),
+			m_arkDevice.Device(),
 			1,
 			&m_inFlightFences[m_currentFrame],
 			VK_TRUE,
 			std::numeric_limits<uint64_t>::max());
 
 		VkResult result = vkAcquireNextImageKHR(
-			m_device.Device(),
+			m_arkDevice.Device(),
 			m_swapChain,
 			std::numeric_limits<uint64_t>::max(),
 			m_imageAvailableSemaphores[m_currentFrame],
@@ -104,7 +104,7 @@ namespace Ark
 	{
 		if (m_imagesInFlight[*imageIndex] != VK_NULL_HANDLE)
 		{
-			vkWaitForFences(m_device.Device(), 1,
+			vkWaitForFences(m_arkDevice.Device(), 1,
 			                &m_imagesInFlight[*imageIndex], VK_TRUE,
 			                UINT64_MAX);
 		}
@@ -132,8 +132,8 @@ namespace Ark
 		submitInfo.signalSemaphoreCount = 1;
 		submitInfo.pSignalSemaphores = signalSemaphores;
 
-		vkResetFences(m_device.Device(), 1, &m_inFlightFences[m_currentFrame]);
-		if (vkQueueSubmit(m_device.GraphicsQueue(), 1, &submitInfo,
+		vkResetFences(m_arkDevice.Device(), 1, &m_inFlightFences[m_currentFrame]);
+		if (vkQueueSubmit(m_arkDevice.GraphicsQueue(), 1, &submitInfo,
 		                  m_inFlightFences[m_currentFrame]) !=
 			VK_SUCCESS)
 		{
@@ -152,7 +152,7 @@ namespace Ark
 
 		presentInfo.pImageIndices = imageIndex;
 
-		auto result = vkQueuePresentKHR(m_device.PresentQueue(), &presentInfo);
+		auto result = vkQueuePresentKHR(m_arkDevice.PresentQueue(), &presentInfo);
 
 		m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -161,7 +161,7 @@ namespace Ark
 
 	void ArkSwapChain::CreateSwapChain()
 	{
-		SwapChainSupportDetails swapChainSupport = m_device.
+		SwapChainSupportDetails swapChainSupport = m_arkDevice.
 			GetSwapChainSupport();
 
 		VkSurfaceFormatKHR surfaceFormat = ChooseSwapSurfaceFormat(
@@ -179,7 +179,7 @@ namespace Ark
 
 		VkSwapchainCreateInfoKHR createInfo = {};
 		createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
-		createInfo.surface = m_device.Surface();
+		createInfo.surface = m_arkDevice.Surface();
 
 		createInfo.minImageCount = imageCount;
 		createInfo.imageFormat = surfaceFormat.format;
@@ -188,7 +188,7 @@ namespace Ark
 		createInfo.imageArrayLayers = 1;
 		createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-		QueueFamilyIndices indices = m_device.FindPhysicalQueueFamilies();
+		QueueFamilyIndices indices = m_arkDevice.FindPhysicalQueueFamilies();
 		uint32_t queueFamilyIndices[] = {
 			indices.m_graphicsFamily, indices.m_presentFamily
 		};
@@ -217,7 +217,7 @@ namespace Ark
 			                          ? VK_NULL_HANDLE
 			                          : m_oldSwapChain->m_swapChain;
 
-		if (vkCreateSwapchainKHR(m_device.Device(), &createInfo, nullptr,
+		if (vkCreateSwapchainKHR(m_arkDevice.Device(), &createInfo, nullptr,
 		                         &m_swapChain) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create swap chain!");
@@ -227,10 +227,10 @@ namespace Ark
 		// allowed to create a swap chain with more. That's why we'll first query the final number of
 		// images with vkGetSwapchainImagesKHR, then resize the container and finally call it again to
 		// retrieve the handles.
-		vkGetSwapchainImagesKHR(m_device.Device(), m_swapChain, &imageCount,
+		vkGetSwapchainImagesKHR(m_arkDevice.Device(), m_swapChain, &imageCount,
 		                        nullptr);
 		m_swapChainImages.resize(imageCount);
-		vkGetSwapchainImagesKHR(m_device.Device(), m_swapChain, &imageCount,
+		vkGetSwapchainImagesKHR(m_arkDevice.Device(), m_swapChain, &imageCount,
 		                        m_swapChainImages.data());
 
 		m_swapChainImageFormat = surfaceFormat.format;
@@ -253,7 +253,7 @@ namespace Ark
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(m_device.Device(), &viewInfo, nullptr,
+			if (vkCreateImageView(m_arkDevice.Device(), &viewInfo, nullptr,
 			                      &m_swapChainImageViews[i]) !=
 				VK_SUCCESS)
 			{
@@ -328,7 +328,7 @@ namespace Ark
 		renderPassInfo.dependencyCount = 1;
 		renderPassInfo.pDependencies = &dependency;
 
-		if (vkCreateRenderPass(m_device.Device(), &renderPassInfo, nullptr,
+		if (vkCreateRenderPass(m_arkDevice.Device(), &renderPassInfo, nullptr,
 		                       &m_renderPass) != VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create render pass!");
@@ -356,7 +356,7 @@ namespace Ark
 			framebufferInfo.layers = 1;
 
 			if (vkCreateFramebuffer(
-				m_device.Device(),
+				m_arkDevice.Device(),
 				&framebufferInfo,
 				nullptr,
 				&m_swapChainFrameBuffers[i]) != VK_SUCCESS)
@@ -394,7 +394,7 @@ namespace Ark
 			imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 			imageInfo.flags = 0;
 
-			m_device.CreateImageWithInfo(
+			m_arkDevice.CreateImageWithInfo(
 				imageInfo,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				m_depthImages[i],
@@ -411,7 +411,7 @@ namespace Ark
 			viewInfo.subresourceRange.baseArrayLayer = 0;
 			viewInfo.subresourceRange.layerCount = 1;
 
-			if (vkCreateImageView(m_device.Device(), &viewInfo, nullptr,
+			if (vkCreateImageView(m_arkDevice.Device(), &viewInfo, nullptr,
 			                      &m_depthImageViews[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error(
@@ -436,13 +436,13 @@ namespace Ark
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
-			if (vkCreateSemaphore(m_device.Device(), &semaphoreInfo, nullptr,
+			if (vkCreateSemaphore(m_arkDevice.Device(), &semaphoreInfo, nullptr,
 			                      &m_imageAvailableSemaphores[i]) !=
 				VK_SUCCESS ||
-				vkCreateSemaphore(m_device.Device(), &semaphoreInfo, nullptr,
+				vkCreateSemaphore(m_arkDevice.Device(), &semaphoreInfo, nullptr,
 				                  &m_renderFinishedSemaphores[i]) !=
 				VK_SUCCESS ||
-				vkCreateFence(m_device.Device(), &fenceInfo, nullptr,
+				vkCreateFence(m_arkDevice.Device(), &fenceInfo, nullptr,
 				              &m_inFlightFences[i]) != VK_SUCCESS)
 			{
 				throw std::runtime_error(
@@ -522,7 +522,7 @@ namespace Ark
 
 	VkFormat ArkSwapChain::FindDepthFormat()
 	{
-		return m_device.FindSupportedFormat(
+		return m_arkDevice.FindSupportedFormat(
 			{
 				VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT,
 				VK_FORMAT_D24_UNORM_S8_UINT

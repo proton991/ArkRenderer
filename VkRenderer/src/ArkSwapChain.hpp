@@ -91,7 +91,7 @@ namespace Ark
 		std::vector<VkImage> m_swapChainImages;
 		std::vector<VkImageView> m_swapChainImageViews;
 
-		ArkDevice& m_device;
+		ArkDevice& m_arkDevice;
 		VkExtent2D m_windowExtent;
 
 		VkSwapchainKHR m_swapChain;

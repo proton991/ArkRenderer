@@ -13,8 +13,7 @@ namespace Ark
 {
 	struct SimplePushConstantData
 	{
-		glm::mat2 transform{1.0f};
-		glm::vec2 offset;
+		glm::mat4 transform{1.0f};
 		alignas(16) glm::vec3 color;
 	};
 
@@ -33,18 +32,21 @@ namespace Ark
 	}
 
 	void SimpleRenderSystem::RenderGameObjects(VkCommandBuffer commandBuffer,
-	                                           std::vector<ArkGameObject>&
-	                                           gameObjects)
+	                                           std::vector<ArkGameObject>& gameObjects,
+	                                           const ArkCamera& camera)
 	{
 		m_arkPipeline->Bind(commandBuffer);
+
+		auto projectionView = camera.GetProjection() * camera.GetView();
 		for (auto& obj : gameObjects)
 		{
-			obj.m_transform2d.rotation = glm::mod(
-				obj.m_transform2d.rotation + 0.1f, 360.0f);
+			obj.m_transform.rotation.y = glm::mod(
+				obj.m_transform.rotation.y + 0.01f, glm::two_pi<float>());
+			obj.m_transform.rotation.x = glm::mod(
+				obj.m_transform.rotation.x + 0.005f, glm::two_pi<float>());
 			SimplePushConstantData push{};
-			push.offset = obj.m_transform2d.translation;
 			push.color = obj.m_color;
-			push.transform = obj.m_transform2d.Mat2();
+			push.transform = projectionView * obj.m_transform.Mat4();
 			vkCmdPushConstants(commandBuffer, m_pipelineLayout,
 			                   VK_SHADER_STAGE_VERTEX_BIT |
 			                   VK_SHADER_STAGE_FRAGMENT_BIT, 0,

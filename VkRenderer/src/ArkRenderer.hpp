@@ -31,6 +31,7 @@ namespace Ark
 			return m_arkSwapChain->GetRenderPass();
 		}
 
+		float GetAspectRatio() const { return m_arkSwapChain->ExtentAspectRatio(); }
 		int GetFrameIndex() const
 		{
 			assert(
