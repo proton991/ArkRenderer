@@ -181,12 +181,15 @@
     <ClInclude Include="src\ArkGameObject.hpp" />
     <ClInclude Include="src\ArkModel.hpp" />
     <ClInclude Include="src\ArkRenderer.hpp" />
+    <ClInclude Include="src\ArkUtils.hpp" />
     <ClInclude Include="src\FirstApp.hpp" />
     <ClInclude Include="src\ArkDevice.hpp" />
     <ClInclude Include="src\ArkPipleline.hpp" />
+    <ClInclude Include="src\InputController.hpp" />
     <ClInclude Include="src\ResourceManager.hpp" />
     <ClInclude Include="src\ArkSwapChain.hpp" />
     <ClInclude Include="src\SimpleRenderSystem.hpp" />
+    <ClInclude Include="src\Timer.hpp" />
     <ClInclude Include="src\WindowSystem.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

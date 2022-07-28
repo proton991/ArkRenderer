@@ -1,5 +1,5 @@
 #include "WindowSystem.hpp"
-
+#include "InputController.hpp"
 #include <stdexcept>
 
 namespace Ark
@@ -20,6 +20,8 @@ namespace Ark
 		                            nullptr, nullptr);
 		glfwSetWindowUserPointer(m_window, this);
 		glfwSetFramebufferSizeCallback(m_window, FrameBufferResizedCallback);
+		InputManager::ConnectWindowInstanceToInput(m_window);
+		DisableCursor();
 	}
 
 	WindowSystem::~WindowSystem()
@@ -35,6 +37,34 @@ namespace Ark
 			VK_SUCCESS)
 		{
 			throw std::runtime_error("failed to create window surface!");
+		}
+	}
+	void WindowSystem::EnableCursor() const {
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	/***********************************************************************************/
+	void WindowSystem::DisableCursor() const {
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+	void WindowSystem::Update()
+	{
+		glfwPollEvents();
+
+		if (InputManager::GetInstance().IsKeyPressed(GLFW_KEY_TAB)) {
+			m_showCursor = !m_showCursor;
+			if (m_showCursor) {
+				EnableCursor();
+			}
+			else {
+				DisableCursor();
+			}
+		}
+
+		// Check if the window needs to be closed
+		if (InputManager::GetInstance().IsKeyPressed(GLFW_KEY_ESCAPE) || glfwWindowShouldClose(m_window)) {
+			m_shouldClose = true;
+			glfwSetWindowShouldClose(m_window, true);
 		}
 	}
 
