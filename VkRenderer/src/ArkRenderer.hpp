@@ -7,56 +7,57 @@
 
 namespace Ark
 {
-	class ArkRenderer
-	{
-	public:
-		ArkRenderer(WindowSystem& window, ArkDevice& device);
-		~ArkRenderer();
+  class ArkRenderer
+  {
+  public:
+    ArkRenderer(WindowSystem& window, ArkDevice& device);
+    ~ArkRenderer();
 
-		ArkRenderer(const ArkRenderer&) = delete;
-		ArkRenderer& operator=(const ArkRenderer&) = delete;
+    ArkRenderer(const ArkRenderer&) = delete;
+    ArkRenderer& operator=(const ArkRenderer&) = delete;
 
-		bool IsFrameInProgress() const { return m_isFrameStarted; }
+    bool IsFrameInProgress() const { return m_isFrameStarted; }
 
-		VkCommandBuffer GetCurrentCommandBuffer() const
-		{
-			assert(
-				m_isFrameStarted &&
-				"Cannot get command buffer when frame is not in progress");
-			return m_commandBuffers[m_frameIndex];
-		}
+    VkCommandBuffer GetCurrentCommandBuffer() const
+    {
+      assert(
+        m_isFrameStarted &&
+        "Cannot get command buffer when frame is not in progress");
+      return m_commandBuffers[m_frameIndex];
+    }
 
-		VkRenderPass GetSwapChainRenderPass() const
-		{
-			return m_arkSwapChain->GetRenderPass();
-		}
+    VkRenderPass GetSwapChainRenderPass() const
+    {
+      return m_arkSwapChain->GetRenderPass();
+    }
 
-		float GetAspectRatio() const { return m_arkSwapChain->ExtentAspectRatio(); }
-		int GetFrameIndex() const
-		{
-			assert(
-				m_isFrameStarted &&
-				"Cannot get frame index when frame not in progress");
-			return m_frameIndex;
-		}
+    float GetAspectRatio() const { return m_arkSwapChain->ExtentAspectRatio(); }
 
-		VkCommandBuffer BeginFrame();
-		void EndFrame();
+    int GetFrameIndex() const
+    {
+      assert(
+        m_isFrameStarted &&
+        "Cannot get frame index when frame not in progress");
+      return m_frameIndex;
+    }
 
-		void BeginSwapChainRenderPass(VkCommandBuffer commandBuffer);
-		void EndSwapChainRenderPass(VkCommandBuffer commandBuffer);
-	private:
-		void CreateCommandBuffers();
-		void RecreateSwapChain();
-		void FreeCommandBuffers();
+    VkCommandBuffer BeginFrame();
+    void EndFrame();
 
-		WindowSystem& m_window;
-		ArkDevice& m_arkDevice;
-		std::unique_ptr<ArkSwapChain> m_arkSwapChain;
-		std::vector<VkCommandBuffer> m_commandBuffers;
+    void BeginSwapChainRenderPass(VkCommandBuffer commandBuffer);
+    void EndSwapChainRenderPass(VkCommandBuffer commandBuffer);
+  private:
+    void CreateCommandBuffers();
+    void RecreateSwapChain();
+    void FreeCommandBuffers();
 
-		uint32_t m_imageIndex;
-		int m_frameIndex{0};
-		bool m_isFrameStarted{false};
-	};
+    WindowSystem& m_window;
+    ArkDevice& m_arkDevice;
+    std::unique_ptr<ArkSwapChain> m_arkSwapChain;
+    std::vector<VkCommandBuffer> m_commandBuffers;
+
+    uint32_t m_imageIndex;
+    int m_frameIndex{0};
+    bool m_isFrameStarted{false};
+  };
 }

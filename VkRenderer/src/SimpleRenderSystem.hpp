@@ -8,24 +8,24 @@
 
 namespace Ark
 {
-	class SimpleRenderSystem
-	{
-	public:
-		SimpleRenderSystem(ArkDevice& device, VkRenderPass renderPass);
-		~SimpleRenderSystem();
+  class SimpleRenderSystem
+  {
+  public:
+    SimpleRenderSystem(ArkDevice& device, VkRenderPass renderPass);
+    ~SimpleRenderSystem();
 
-		SimpleRenderSystem(const SimpleRenderSystem&) = delete;
-		SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
-		void RenderGameObjects(VkCommandBuffer commandBuffer,
-		                       std::vector<ArkGameObject>& gameObjects,
-		                       const ArkCamera& camera);
+    SimpleRenderSystem(const SimpleRenderSystem&) = delete;
+    SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
+    void RenderGameObjects(VkCommandBuffer commandBuffer,
+                           std::vector<ArkGameObject>& gameObjects,
+                           const ArkCamera& camera);
 
-	private:
-		void CreatePipelineLayout();
-		void CreatePipeline(VkRenderPass renderPass);
+  private:
+    void CreatePipelineLayout();
+    void CreatePipeline(VkRenderPass renderPass);
 
-		ArkDevice& m_arkDevice;
-		std::unique_ptr<ArkPipeline> m_arkPipeline;
-		VkPipelineLayout m_pipelineLayout;
-	};
+    ArkDevice& m_arkDevice;
+    std::unique_ptr<ArkPipeline> m_arkPipeline;
+    VkPipelineLayout m_pipelineLayout;
+  };
 }
