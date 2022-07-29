@@ -12,21 +12,16 @@ namespace Ark
   class ArkCamera
   {
   public:
-    ArkCamera(glm::vec3 eye, glm::vec3 target, float fov, float aspect,
-              float near, float far);
+    ArkCamera(glm::vec3 eye, glm::vec3 target, float fov, float aspect, float near, float far);
 
-    void SetOrthographicProjection(float left, float right, float top,
-                                   float bottom, float near, float far);
+    void SetOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
 
-    void SetPerspectiveProjection(float fovY, float aspect, float near,
-                                  float far);
+    void SetPerspectiveProjection(float fovY, float aspect, float near, float far);
 
-    void SetViewDirection(glm::vec3 position, glm::vec3 direction,
-                          glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
+    void SetViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
 
     // lock camera with a target
-    void SetViewTarget(glm::vec3 position, glm::vec3 target,
-                       glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
+    void SetViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
 
     void SetViewYXZ(glm::vec3 position, glm::vec3 rotation);
     const glm::mat4& GetProjection() const { return m_projectionMatrix; }
@@ -65,8 +60,7 @@ namespace Ark
     void UpdateView(const bool constrainPitch = true);
 
     // Processes input received from keyboard.
-    void ProcessKeyboard(const Direction direction,
-                         const double deltaTime) noexcept;
+    void ProcessKeyboard(const Direction direction, const double deltaTime) noexcept;
 
     // Calculates the front vector from the Camera's (updated) Eular Angles
     void UpdateVectors();

@@ -20,9 +20,7 @@ namespace Ark
 
     VkCommandBuffer GetCurrentCommandBuffer() const
     {
-      assert(
-        m_isFrameStarted &&
-        "Cannot get command buffer when frame is not in progress");
+      assert(m_isFrameStarted && "Cannot get command buffer when frame is not in progress");
       return m_commandBuffers[m_frameIndex];
     }
 
@@ -35,9 +33,7 @@ namespace Ark
 
     int GetFrameIndex() const
     {
-      assert(
-        m_isFrameStarted &&
-        "Cannot get frame index when frame not in progress");
+      assert(m_isFrameStarted && "Cannot get frame index when frame not in progress");
       return m_frameIndex;
     }
 

@@ -32,15 +32,12 @@ namespace Ark
 
     static void ConnectWindowInstanceToInput(GLFWwindow* window)
     {
-      const auto keyCallback = [](GLFWwindow* w, auto key, auto scancode,
-                                  auto action, auto mode)
+      const auto keyCallback = [](GLFWwindow* w, auto key, auto scancode, auto action, auto mode)
       {
-        InputManager::GetInstance().keyPressed(
-          key, scancode, action, mode);
+        InputManager::GetInstance().keyPressed(key, scancode, action, mode);
       };
       glfwSetKeyCallback(window, keyCallback);
-      const auto cursorPosCallback = [
-        ](GLFWwindow* w, auto xPos, auto yPos)
+      const auto cursorPosCallback = [ ](GLFWwindow* w, auto xPos, auto yPos)
       {
         InputManager::GetInstance().mouseMoved(xPos, yPos);
       };
@@ -79,8 +76,7 @@ namespace Ark
 
     // Generic Input Callbacks
     // Mouse moved
-    std::function<void(double, double)> mouseMoved = [&
-      ](auto xPos, auto yPos)
+    std::function<void(double, double)> mouseMoved = [& ](auto xPos, auto yPos)
     {
       this->m_mouseMoved = true;
       this->m_xPos = xPos;
@@ -88,19 +84,16 @@ namespace Ark
     };
 
     // Key Pressed
-    std::function<void(int, int, int, int)> keyPressed = [&
-      ](auto key, auto scancode, auto action, auto mode)
+    std::function<void(int, int, int, int)> keyPressed = [& ](auto key, auto scancode, auto action, auto mode)
     {
       if (key >= 0 && key < 1024)
       {
         switch (action)
         {
         // Pressed
-        case 1:
-          this->m_keys[key] = true;
+        case 1: this->m_keys[key] = true;
           break;
-        case 0:
-          this->m_keys[key] = false;
+        case 0: this->m_keys[key] = false;
           break;
         }
       }

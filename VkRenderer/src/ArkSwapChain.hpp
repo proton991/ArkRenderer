@@ -18,8 +18,7 @@ namespace Ark
     static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
     ArkSwapChain(ArkDevice& deviceRef, VkExtent2D windowExtent);
-    ArkSwapChain(ArkDevice& deviceRef, VkExtent2D windowExtent,
-                 std::shared_ptr<ArkSwapChain> previous);
+    ArkSwapChain(ArkDevice& deviceRef, VkExtent2D windowExtent, std::shared_ptr<ArkSwapChain> previous);
     ~ArkSwapChain();
 
     ArkSwapChain(const ArkSwapChain&) = delete;
@@ -45,20 +44,18 @@ namespace Ark
 
     float ExtentAspectRatio()
     {
-      return static_cast<float>(m_swapChainExtent.width) / static_cast<
-        float>(m_swapChainExtent.height);
+      return static_cast<float>(m_swapChainExtent.width) / static_cast<float>(m_swapChainExtent.height);
     }
 
     VkFormat FindDepthFormat();
 
     VkResult AcquireNextImage(uint32_t* imageIndex);
-    VkResult SubmitCommandBuffers(const VkCommandBuffer* buffers,
-                                  uint32_t* imageIndex);
+    VkResult SubmitCommandBuffers(const VkCommandBuffer* buffers, uint32_t* imageIndex);
 
     bool CompareSwapChainFormats(const ArkSwapChain& swapChain) const
     {
-      return swapChain.m_swapChainImageFormat == m_swapChainImageFormat &&
-        swapChain.m_swapChainDepthFormat == m_swapChainDepthFormat;
+      return swapChain.m_swapChainImageFormat == m_swapChainImageFormat && swapChain.m_swapChainDepthFormat ==
+        m_swapChainDepthFormat;
     }
 
   private:
@@ -71,12 +68,9 @@ namespace Ark
     void CreateSyncObjects();
 
     // Helper functions
-    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(
-      const std::vector<VkSurfaceFormatKHR>& availableFormats);
-    VkPresentModeKHR ChooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR>& availablePresentModes);
-    VkExtent2D ChooseSwapExtent(
-      const VkSurfaceCapabilitiesKHR& capabilities);
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
 
     VkFormat m_swapChainImageFormat;
     VkFormat m_swapChainDepthFormat;

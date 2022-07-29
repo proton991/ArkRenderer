@@ -27,67 +27,50 @@ namespace Ark
   }
 
   // temporary helper function, creates a 1x1x1 cube centered at offset
-  std::unique_ptr<ArkModel> CreateCubeModel(ArkDevice& device,
-                                            glm::vec3 offset)
+  std::unique_ptr<ArkModel> CreateCubeModel(ArkDevice& device, glm::vec3 offset)
   {
     ArkModel::Builder modelBuilder{};
     modelBuilder.vertices = {
       // left face (white)
-      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}},
-      {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .9f, .9f}}, {{-.5f, .5f, .5f}, {.9f, .9f, .9f}},
+      {{-.5f, -.5f, .5f}, {.9f, .9f, .9f}}, {{-.5f, .5f, -.5f}, {.9f, .9f, .9f}},
 
       // right face (yellow)
-      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, -.5f}, {.8f, .8f, .1f}}, {{.5f, .5f, .5f}, {.8f, .8f, .1f}},
+      {{.5f, -.5f, .5f}, {.8f, .8f, .1f}}, {{.5f, .5f, -.5f}, {.8f, .8f, .1f}},
 
       // top face (orange, remember y axis points down)
-      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}},
-      {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, -.5f}, {.9f, .6f, .1f}}, {{.5f, -.5f, .5f}, {.9f, .6f, .1f}},
+      {{-.5f, -.5f, .5f}, {.9f, .6f, .1f}}, {{.5f, -.5f, -.5f}, {.9f, .6f, .1f}},
 
       // bottom face (red)
-      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}},
-      {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, -.5f}, {.8f, .1f, .1f}}, {{.5f, .5f, .5f}, {.8f, .1f, .1f}},
+      {{-.5f, .5f, .5f}, {.8f, .1f, .1f}}, {{.5f, .5f, -.5f}, {.8f, .1f, .1f}},
 
       // nose face (blue)
-      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
-      {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, -.5f, 0.5f}, {.1f, .1f, .8f}}, {{.5f, .5f, 0.5f}, {.1f, .1f, .8f}},
+      {{-.5f, .5f, 0.5f}, {.1f, .1f, .8f}}, {{.5f, -.5f, 0.5f}, {.1f, .1f, .8f}},
 
       // tail face (green)
-      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
-      {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, -.5f, -0.5f}, {.1f, .8f, .1f}}, {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}},
+      {{-.5f, .5f, -0.5f}, {.1f, .8f, .1f}}, {{.5f, -.5f, -0.5f}, {.1f, .8f, .1f}},
     };
     for (auto& v : modelBuilder.vertices)
     {
       v.position += offset;
     }
     modelBuilder.indices = {
-      0, 1, 2, 0, 3, 1, 4, 5, 6, 4, 7, 5, 8, 9, 10, 8, 11, 9,
-      12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17, 20, 21, 22, 20, 23,
-      21
+      0, 1, 2, 0, 3, 1, 4, 5, 6, 4, 7, 5, 8, 9, 10, 8, 11, 9, 12, 13, 14, 12, 15, 13, 16, 17, 18, 16, 19, 17,
+      20, 21, 22, 20, 23, 21
     };
     return std::make_unique<ArkModel>(device, modelBuilder);
   }
 
   void FirstApp::Run()
   {
-    SimpleRenderSystem simpleRenderSystem{
-      m_arkDevice, m_arkRenderer.GetSwapChainRenderPass()
-    };
+    SimpleRenderSystem simpleRenderSystem{m_arkDevice, m_arkRenderer.GetSwapChainRenderPass()};
     ArkCamera camera{
-      glm::vec3(.0f, .0f, .0f), glm::vec3(0.f, 0.f, 2.5f),
-      glm::radians(70.0f),
+      glm::vec3(.0f, .0f, .0f), glm::vec3(0.f, 0.f, 2.5f), glm::radians(70.0f),
       m_arkRenderer.GetAspectRatio(), 0.1f, 100.0f
     };
     //camera.SetViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
@@ -104,9 +87,7 @@ namespace Ark
       timer.Update(glfwGetTime());
       if (hasOneSecondPassed)
       {
-        const auto frameTime{
-          Timer::FrameTimeMilliseconds(numFramesRendered)
-        };
+        const auto frameTime{Timer::FrameTimeMilliseconds(numFramesRendered)};
         numFramesRendered = 0;
         hasOneSecondPassed = false;
       }
@@ -124,8 +105,7 @@ namespace Ark
       if (auto commandBuffer = m_arkRenderer.BeginFrame())
       {
         m_arkRenderer.BeginSwapChainRenderPass(commandBuffer);
-        simpleRenderSystem.RenderGameObjects(
-          commandBuffer, m_gameObjects, camera);
+        simpleRenderSystem.RenderGameObjects(commandBuffer, m_gameObjects, camera);
         m_arkRenderer.EndSwapChainRenderPass(commandBuffer);
         m_arkRenderer.EndFrame();
       }
@@ -136,8 +116,7 @@ namespace Ark
 
   void FirstApp::LoadGameObjects()
   {
-    std::shared_ptr<ArkModel> arkModel = ArkModel::CreateModelFromFile(
-      m_arkDevice, "models/smooth_vase.obj");
+    std::shared_ptr<ArkModel> arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/smooth_vase.obj");
     auto cube = ArkGameObject::Create();
     cube.m_model = arkModel;
     cube.m_transform.translation = {.0f, .0f, 2.5f};

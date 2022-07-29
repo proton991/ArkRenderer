@@ -9,27 +9,23 @@
 namespace Ark
 {
   // local callback functions
-  static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-    void* pUserData)
+  static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                      VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                      const VkDebugUtilsMessengerCallbackDataEXT*
+                                                      pCallbackData, void* pUserData)
   {
-    std::cerr << "validation layer: " << pCallbackData->pMessage <<
-      std::endl;
+    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
   }
 
-  VkResult CreateDebugUtilsMessengerEXT(
-    VkInstance instance,
-    const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-    const VkAllocationCallbacks* pAllocator,
-    VkDebugUtilsMessengerEXT* pDebugMessenger)
+  VkResult CreateDebugUtilsMessengerEXT(VkInstance instance,
+                                        const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+                                        const VkAllocationCallbacks* pAllocator,
+                                        VkDebugUtilsMessengerEXT* pDebugMessenger)
   {
     auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-      instance,
-      "vkCreateDebugUtilsMessengerEXT");
+      instance, "vkCreateDebugUtilsMessengerEXT");
     if (func != nullptr)
     {
       return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -40,14 +36,11 @@ namespace Ark
     }
   }
 
-  void DestroyDebugUtilsMessengerEXT(
-    VkInstance instance,
-    VkDebugUtilsMessengerEXT debugMessenger,
-    const VkAllocationCallbacks* pAllocator)
+  void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
+                                     const VkAllocationCallbacks* pAllocator)
   {
     auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-      instance,
-      "vkDestroyDebugUtilsMessengerEXT");
+      instance, "vkDestroyDebugUtilsMessengerEXT");
     if (func != nullptr)
     {
       func(instance, debugMessenger, pAllocator);
@@ -72,8 +65,7 @@ namespace Ark
 
     if (enableValidationLayers)
     {
-      DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger,
-                                    nullptr);
+      DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
     }
 
     vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
@@ -84,8 +76,7 @@ namespace Ark
   {
     if (enableValidationLayers && !CheckValidationLayerSupport())
     {
-      throw std::runtime_error(
-        "validation layers requested, but not available!");
+      throw std::runtime_error("validation layers requested, but not available!");
     }
 
     VkApplicationInfo appInfo = {};
@@ -101,20 +92,17 @@ namespace Ark
     createInfo.pApplicationInfo = &appInfo;
 
     auto extensions = GetRequiredExtensions();
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.
-      size());
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     createInfo.ppEnabledExtensionNames = extensions.data();
 
     VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
     if (enableValidationLayers)
     {
-      createInfo.enabledLayerCount = static_cast<uint32_t>(
-        validationLayers.size());
+      createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
       createInfo.ppEnabledLayerNames = validationLayers.data();
 
       PopulateDebugMessengerCreateInfo(debugCreateInfo);
-      createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&
-        debugCreateInfo;
+      createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
     }
     else
     {
@@ -136,8 +124,7 @@ namespace Ark
     vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
     if (deviceCount == 0)
     {
-      throw std::runtime_error(
-        "failed to find GPUs with Vulkan support!");
+      throw std::runtime_error("failed to find GPUs with Vulkan support!");
     }
     std::cout << "Device count: " << deviceCount << std::endl;
     std::vector<VkPhysicalDevice> devices(deviceCount);
@@ -166,9 +153,7 @@ namespace Ark
     QueueFamilyIndices indices = FindQueueFamilies(m_physicalDevice);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = {
-      indices.m_graphicsFamily, indices.m_presentFamily
-    };
+    std::set<uint32_t> uniqueQueueFamilies = {indices.m_graphicsFamily, indices.m_presentFamily};
 
     float queuePriority = 1.0f;
     for (uint32_t queueFamily : uniqueQueueFamilies)
@@ -187,21 +172,18 @@ namespace Ark
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
-    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos
-      .size());
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(
-      deviceExtensions.size());
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     // might not really be necessary anymore because device specific validation layers
     // have been deprecated
     if (enableValidationLayers)
     {
-      createInfo.enabledLayerCount = static_cast<uint32_t>(
-        validationLayers.size());
+      createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
       createInfo.ppEnabledLayerNames = validationLayers.data();
     }
     else
@@ -209,14 +191,12 @@ namespace Ark
       createInfo.enabledLayerCount = 0;
     }
 
-    if (vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) !=
-      VK_SUCCESS)
+    if (vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to create logical device!");
     }
 
-    vkGetDeviceQueue(m_device, indices.m_graphicsFamily, 0,
-                     &m_graphicsQueue);
+    vkGetDeviceQueue(m_device, indices.m_graphicsFamily, 0, &m_graphicsQueue);
     vkGetDeviceQueue(m_device, indices.m_presentFamily, 0, &m_presentQueue);
   }
 
@@ -227,12 +207,9 @@ namespace Ark
     VkCommandPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.queueFamilyIndex = queueFamilyIndices.m_graphicsFamily;
-    poolInfo.flags =
-      VK_COMMAND_POOL_CREATE_TRANSIENT_BIT |
-      VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
-    if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &m_commandPool) !=
-      VK_SUCCESS)
+    if (vkCreateCommandPool(m_device, &poolInfo, nullptr, &m_commandPool) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to create command pool!");
     }
@@ -248,39 +225,31 @@ namespace Ark
     QueueFamilyIndices indices = FindQueueFamilies(device);
     VkPhysicalDeviceProperties deviceProperties;
     vkGetPhysicalDeviceProperties(device, &deviceProperties);
-    if (deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
-      return false;
+    if (deviceProperties.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) return false;
     bool extensionsSupported = CheckDeviceExtensionSupport(device);
 
     bool swapChainAdequate = false;
     if (extensionsSupported)
     {
-      SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(
-        device);
-      swapChainAdequate = !swapChainSupport.m_formats.empty() && !
-        swapChainSupport.m_presentModes.empty();
+      SwapChainSupportDetails swapChainSupport = QuerySwapChainSupport(device);
+      swapChainAdequate = !swapChainSupport.m_formats.empty() && ! swapChainSupport.m_presentModes.empty();
     }
 
     VkPhysicalDeviceFeatures supportedFeatures;
     vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
 
-    return indices.IsComplete() && extensionsSupported && swapChainAdequate
-      &&
-      supportedFeatures.samplerAnisotropy;
+    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.
+      samplerAnisotropy;
   }
 
-  void ArkDevice::PopulateDebugMessengerCreateInfo(
-    VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+  void ArkDevice::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
   {
     createInfo = {};
-    createInfo.sType =
-      VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity =
-      VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
       VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-      VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+      VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = debugCallback;
     createInfo.pUserData = nullptr; // Optional
   }
@@ -290,8 +259,7 @@ namespace Ark
     if (!enableValidationLayers) return;
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
     PopulateDebugMessengerCreateInfo(createInfo);
-    if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr,
-                                     &m_debugMessenger) != VK_SUCCESS)
+    if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to set up debug messenger!");
     }
@@ -333,9 +301,7 @@ namespace Ark
     const char** glfwExtensions;
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
-    std::vector<const char*> extensions(glfwExtensions,
-                                        glfwExtensions +
-                                        glfwExtensionCount);
+    std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
 
     if (enableValidationLayers)
     {
@@ -348,11 +314,9 @@ namespace Ark
   void ArkDevice::HasGlfwRequiredInstanceExtensions()
   {
     uint32_t extensionCount = 0;
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-                                           nullptr);
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
     std::vector<VkExtensionProperties> extensions(extensionCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount,
-                                           extensions.data());
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
     std::cout << "available extensions:" << std::endl;
     std::unordered_set<std::string> available;
@@ -377,18 +341,12 @@ namespace Ark
   bool ArkDevice::CheckDeviceExtensionSupport(VkPhysicalDevice device)
   {
     uint32_t extensionCount;
-    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount,
-                                         nullptr);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
-    vkEnumerateDeviceExtensionProperties(
-      device,
-      nullptr,
-      &extensionCount,
-      availableExtensions.data());
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
 
-    std::set<std::string> requiredExtensions(
-      deviceExtensions.begin(), deviceExtensions.end());
+    std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
 
     for (const auto& extension : availableExtensions)
     {
@@ -403,25 +361,21 @@ namespace Ark
     QueueFamilyIndices indices;
 
     uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(
-      device, &queueFamilyCount, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
     std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(
-      device, &queueFamilyCount, queueFamilies.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
     int i = 0;
     for (const auto& queueFamily : queueFamilies)
     {
-      if (queueFamily.queueCount > 0 && queueFamily.queueFlags &
-        VK_QUEUE_GRAPHICS_BIT)
+      if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
       {
         indices.m_graphicsFamily = i;
         indices.m_graphicsFamilyHasValue = true;
       }
       VkBool32 presentSupport = false;
-      vkGetPhysicalDeviceSurfaceSupportKHR(
-        device, i, m_surface, &presentSupport);
+      vkGetPhysicalDeviceSurfaceSupportKHR(device, i, m_surface, &presentSupport);
       if (queueFamily.queueCount > 0 && presentSupport)
       {
         indices.m_presentFamily = i;
@@ -438,58 +392,45 @@ namespace Ark
     return indices;
   }
 
-  SwapChainSupportDetails ArkDevice::QuerySwapChainSupport(
-    VkPhysicalDevice device)
+  SwapChainSupportDetails ArkDevice::QuerySwapChainSupport(VkPhysicalDevice device)
   {
     SwapChainSupportDetails details;
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-      device, m_surface, &details.m_capabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, m_surface, &details.m_capabilities);
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount,
-                                         nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, nullptr);
 
     if (formatCount != 0)
     {
       details.m_formats.resize(formatCount);
-      vkGetPhysicalDeviceSurfaceFormatsKHR(
-        device, m_surface, &formatCount, details.m_formats.data());
+      vkGetPhysicalDeviceSurfaceFormatsKHR(device, m_surface, &formatCount, details.m_formats.data());
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(
-      device, m_surface, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount, nullptr);
 
     if (presentModeCount != 0)
     {
       details.m_presentModes.resize(presentModeCount);
-      vkGetPhysicalDeviceSurfacePresentModesKHR(
-        device,
-        m_surface,
-        &presentModeCount,
-        details.m_presentModes.data());
+      vkGetPhysicalDeviceSurfacePresentModesKHR(device, m_surface, &presentModeCount,
+                                                details.m_presentModes.data());
     }
     return details;
   }
 
-  VkFormat ArkDevice::FindSupportedFormat(
-    const std::vector<VkFormat>& candidates, VkImageTiling tiling,
-    VkFormatFeatureFlags features)
+  VkFormat ArkDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling,
+                                          VkFormatFeatureFlags features)
   {
     for (VkFormat format : candidates)
     {
       VkFormatProperties props;
-      vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format,
-                                          &props);
+      vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
 
-      if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures
-        & features) == features)
+      if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features)
       {
         return format;
       }
-      else if (
-        tiling == VK_IMAGE_TILING_OPTIMAL && (props.
-          optimalTilingFeatures & features) == features)
+      else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features)
       {
         return format;
       }
@@ -497,16 +438,13 @@ namespace Ark
     throw std::runtime_error("failed to find supported format!");
   }
 
-  uint32_t ArkDevice::FindMemoryType(uint32_t typeFilter,
-                                     VkMemoryPropertyFlags properties)
+  uint32_t ArkDevice::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
   {
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memProperties);
     for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
     {
-      if ((typeFilter & (1 << i)) &&
-        (memProperties.memoryTypes[i].propertyFlags & properties) ==
-        properties)
+      if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
       {
         return i;
       }
@@ -515,12 +453,8 @@ namespace Ark
     throw std::runtime_error("failed to find suitable memory type!");
   }
 
-  void ArkDevice::CreateBuffer(
-    VkDeviceSize size,
-    VkBufferUsageFlags usage,
-    VkMemoryPropertyFlags properties,
-    VkBuffer& buffer,
-    VkDeviceMemory& bufferMemory)
+  void ArkDevice::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties,
+                               VkBuffer& buffer, VkDeviceMemory& bufferMemory)
   {
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -528,8 +462,7 @@ namespace Ark
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(m_device, &bufferInfo, nullptr, &buffer) !=
-      VK_SUCCESS)
+    if (vkCreateBuffer(m_device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to create vertex buffer!");
     }
@@ -540,14 +473,11 @@ namespace Ark
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = FindMemoryType(
-      memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory) !=
-      VK_SUCCESS)
+    if (vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
     {
-      throw std::runtime_error(
-        "failed to allocate vertex buffer memory!");
+      throw std::runtime_error("failed to allocate vertex buffer memory!");
     }
 
     vkBindBufferMemory(m_device, buffer, bufferMemory, 0);
@@ -587,8 +517,7 @@ namespace Ark
     vkFreeCommandBuffers(m_device, m_commandPool, 1, &commandBuffer);
   }
 
-  void ArkDevice::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer,
-                             VkDeviceSize size)
+  void ArkDevice::CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
   {
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 
@@ -601,9 +530,8 @@ namespace Ark
     EndSingleTimeCommands(commandBuffer);
   }
 
-  void ArkDevice::CopyBufferToImage(
-    VkBuffer buffer, VkImage image, uint32_t width, uint32_t height,
-    uint32_t layerCount)
+  void ArkDevice::CopyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height,
+                                    uint32_t layerCount)
   {
     VkCommandBuffer commandBuffer = BeginSingleTimeCommands();
 
@@ -620,21 +548,12 @@ namespace Ark
     region.imageOffset = {0, 0, 0};
     region.imageExtent = {width, height, 1};
 
-    vkCmdCopyBufferToImage(
-      commandBuffer,
-      buffer,
-      image,
-      VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-      1,
-      &region);
+    vkCmdCopyBufferToImage(commandBuffer, buffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
     EndSingleTimeCommands(commandBuffer);
   }
 
-  void ArkDevice::CreateImageWithInfo(
-    const VkImageCreateInfo& imageInfo,
-    VkMemoryPropertyFlags properties,
-    VkImage& image,
-    VkDeviceMemory& imageMemory)
+  void ArkDevice::CreateImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties,
+                                      VkImage& image, VkDeviceMemory& imageMemory)
   {
     if (vkCreateImage(m_device, &imageInfo, nullptr, &image) != VK_SUCCESS)
     {
@@ -647,11 +566,9 @@ namespace Ark
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = FindMemoryType(
-      memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(m_device, &allocInfo, nullptr, &imageMemory) !=
-      VK_SUCCESS)
+    if (vkAllocateMemory(m_device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to allocate image memory!");
     }

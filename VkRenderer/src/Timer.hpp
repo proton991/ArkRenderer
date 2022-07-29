@@ -6,9 +6,8 @@ class Timer
 {
   using TimerCallbackFunc = std::function<void()>;
 public:
-  Timer(const double secondsBetweenCallbackTriggers, TimerCallbackFunc callback)
-    : m_secondsBetweenCallbackTriggers{secondsBetweenCallbackTriggers},
-      m_callbackFunc{callback}
+  Timer(const double secondsBetweenCallbackTriggers, TimerCallbackFunc callback) :
+    m_secondsBetweenCallbackTriggers{secondsBetweenCallbackTriggers}, m_callbackFunc{callback}
   {
   }
 

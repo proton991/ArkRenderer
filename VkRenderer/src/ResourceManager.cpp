@@ -1,8 +1,7 @@
 #include "ResourceManager.hpp"
 #include <fstream>
 
-std::vector<char> ResourceManager::ReadTextFile(
-  const std::filesystem::path& path) const
+std::vector<char> ResourceManager::ReadTextFile(const std::filesystem::path& path) const
 {
   // std::ios::ate seek to the end
   std::ifstream file(path, std::ios::ate | std::ios::binary);

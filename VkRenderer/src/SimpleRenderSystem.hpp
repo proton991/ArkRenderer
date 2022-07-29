@@ -16,8 +16,7 @@ namespace Ark
 
     SimpleRenderSystem(const SimpleRenderSystem&) = delete;
     SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
-    void RenderGameObjects(VkCommandBuffer commandBuffer,
-                           std::vector<ArkGameObject>& gameObjects,
+    void RenderGameObjects(VkCommandBuffer commandBuffer, std::vector<ArkGameObject>& gameObjects,
                            const ArkCamera& camera);
 
   private:

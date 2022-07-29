@@ -10,8 +10,7 @@ namespace Ark
   {
   private:
     void Init();
-    static void FrameBufferResizedCallback(GLFWwindow* window, int width,
-                                           int height);
+    static void FrameBufferResizedCallback(GLFWwindow* window, int width, int height);
     int m_width;
     int m_height;
     bool m_frameBufferResized = false;
@@ -33,9 +32,7 @@ namespace Ark
 
     VkExtent2D GetExtent() const
     {
-      return {
-        static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height)
-      };
+      return {static_cast<uint32_t>(m_width), static_cast<uint32_t>(m_height)};
     }
 
     void EnableCursor() const;

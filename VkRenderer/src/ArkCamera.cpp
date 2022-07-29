@@ -10,10 +10,8 @@
 
 namespace Ark
 {
-  ArkCamera::ArkCamera(glm::vec3 eye, glm::vec3 target, float fov,
-                       float aspect, float near, float far)
-    : m_position(eye), m_aspect(aspect), m_fovY(fov), m_near(near),
-      m_far(far)
+  ArkCamera::ArkCamera(glm::vec3 eye, glm::vec3 target, float fov, float aspect, float near, float far) :
+    m_position(eye), m_aspect(aspect), m_fovY(fov), m_near(near), m_far(far)
   {
     glm::vec3 dir = glm::normalize(target - m_position);
     m_pitch = glm::degrees(asin(dir.y));
@@ -23,8 +21,8 @@ namespace Ark
     UpdateVectors();
   }
 
-  void ArkCamera::SetOrthographicProjection(
-    float left, float right, float top, float bottom, float near, float far)
+  void ArkCamera::SetOrthographicProjection(float left, float right, float top, float bottom, float near,
+                                            float far)
   {
     m_projectionMatrix = glm::mat4{1.0f};
     m_projectionMatrix[0][0] = 2.f / (right - left);
@@ -35,8 +33,7 @@ namespace Ark
     m_projectionMatrix[3][2] = -near / (far - near);
   }
 
-  void ArkCamera::SetPerspectiveProjection(float fovY, float aspect,
-                                           float near, float far)
+  void ArkCamera::SetPerspectiveProjection(float fovY, float aspect, float near, float far)
   {
     assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
     const float tanHalfFovy = tan(fovY / 2.f);
@@ -48,8 +45,7 @@ namespace Ark
     m_projectionMatrix[3][2] = -(far * near) / (far - near);
   }
 
-  void ArkCamera::SetViewDirection(glm::vec3 position, glm::vec3 direction,
-                                   glm::vec3 up)
+  void ArkCamera::SetViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up)
   {
     const glm::vec3 w{glm::normalize(direction)};
     const glm::vec3 u{glm::normalize(glm::cross(w, up))};
@@ -70,8 +66,7 @@ namespace Ark
     m_viewMatrix[3][2] = -glm::dot(w, position);
   }
 
-  void ArkCamera::SetViewTarget(glm::vec3 position, glm::vec3 target,
-                                glm::vec3 up)
+  void ArkCamera::SetViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up)
   {
     SetViewDirection(position, target - position, up);
   }
@@ -84,12 +79,8 @@ namespace Ark
     const float s2 = glm::sin(rotation.x);
     const float c1 = glm::cos(rotation.y);
     const float s1 = glm::sin(rotation.y);
-    const glm::vec3 u{
-      (c1 * c3 + s1 * s2 * s3), (c2 * s3), (c1 * s2 * s3 - c3 * s1)
-    };
-    const glm::vec3 v{
-      (c3 * s1 * s2 - c1 * s3), (c2 * c3), (c1 * c3 * s2 + s1 * s3)
-    };
+    const glm::vec3 u{(c1 * c3 + s1 * s2 * s3), (c2 * s3), (c1 * s2 * s3 - c3 * s1)};
+    const glm::vec3 v{(c3 * s1 * s2 - c1 * s3), (c2 * c3), (c1 * c3 * s2 + s1 * s3)};
     const glm::vec3 w{(c2 * s1), (-s2), (c1 * c2)};
     m_viewMatrix = glm::mat4{1.f};
     m_viewMatrix[0][0] = u.x;
@@ -106,30 +97,23 @@ namespace Ark
     m_viewMatrix[3][2] = -glm::dot(w, position);
   }
 
-  void ArkCamera::ProcessKeyboard(const Direction direction,
-                                  const double deltaTime) noexcept
+  void ArkCamera::ProcessKeyboard(const Direction direction, const double deltaTime) noexcept
   {
     const float velocity = m_speed * static_cast<float>(deltaTime);
 
     switch (direction)
     {
-    case Direction::FORWARD:
-      m_position += m_front * velocity;
+    case Direction::FORWARD: m_position += m_front * velocity;
       break;
-    case Direction::BACKWARD:
-      m_position -= m_front * velocity;
+    case Direction::BACKWARD: m_position -= m_front * velocity;
       break;
-    case Direction::LEFT:
-      m_position -= m_right * velocity;
+    case Direction::LEFT: m_position -= m_right * velocity;
       break;
-    case Direction::RIGHT:
-      m_position += m_right * velocity;
+    case Direction::RIGHT: m_position += m_right * velocity;
       break;
-    case Direction::UP:
-      m_position += m_worldUp * velocity;
+    case Direction::UP: m_position += m_worldUp * velocity;
       break;
-    case Direction::DOWN:
-      m_position -= m_worldUp * velocity;
+    case Direction::DOWN: m_position -= m_worldUp * velocity;
       break;
     }
   }
@@ -138,11 +122,9 @@ namespace Ark
   {
     // Calculate the new Front vector
     glm::vec3 front{
-      front.x = glm::cos(glm::radians(m_yaw)) * glm::cos(
-        glm::radians(m_pitch)),
+      front.x = glm::cos(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch)),
       front.y = glm::sin(glm::radians(m_pitch)),
-      front.z = glm::sin(glm::radians(m_yaw)) * glm::cos(
-        glm::radians(m_pitch))
+      front.z = glm::sin(glm::radians(m_yaw)) * glm::cos(glm::radians(m_pitch))
     };
 
     m_front = glm::normalize(front);

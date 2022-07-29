@@ -21,16 +21,12 @@ namespace Ark
       glm::vec3 color{};
       glm::vec3 normal{};
       glm::vec2 uv{};
-      static std::vector<VkVertexInputBindingDescription>
-      GetBindingDescriptions();
-      static std::vector<VkVertexInputAttributeDescription>
-      GetAttributeDescriptions();
+      static std::vector<VkVertexInputBindingDescription> GetBindingDescriptions();
+      static std::vector<VkVertexInputAttributeDescription> GetAttributeDescriptions();
 
       bool operator==(const Vertex& other) const
       {
-        return position == other.position && color == other.color && normal ==
-          other.normal &&
-          uv == other.uv;
+        return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
       }
     };
 
@@ -42,8 +38,7 @@ namespace Ark
       void LoadModel(const std::string& filePath);
     };
 
-    static std::unique_ptr<ArkModel> CreateModelFromFile(
-      ArkDevice& device, const std::string& filePath);
+    static std::unique_ptr<ArkModel> CreateModelFromFile(ArkDevice& device, const std::string& filePath);
 
     ArkModel(ArkDevice& device, const ArkModel::Builder& builder);
     ~ArkModel();

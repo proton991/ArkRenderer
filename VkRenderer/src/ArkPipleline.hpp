@@ -28,25 +28,21 @@ namespace Ark
   class ArkPipeline
   {
   public:
-    ArkPipeline(ArkDevice& device, const std::string& vertShaderPath,
-                const std::string& fragShaderPath,
+    ArkPipeline(ArkDevice& device, const std::string& vertShaderPath, const std::string& fragShaderPath,
                 const PipelineConfigInfo& configInfo);
 
     ~ArkPipeline();
     ArkPipeline(const ArkPipeline&) = delete;
     ArkPipeline& operator=(const ArkPipeline&) = delete;
     void Bind(VkCommandBuffer commandBuffer);
-    static void DefaultPipelineConfigInfo(
-      PipelineConfigInfo& configInfo);
+    static void DefaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
   private:
     ArkDevice& m_arkDevice;
     VkPipeline m_graphicsPipeline;
     VkShaderModule m_vertexShaderModule;
     VkShaderModule m_fragShaderModule;
-    void CreateGraphicsPipeline(const std::string& vertShaderPath,
-                                const std::string& fragShaderPath,
+    void CreateGraphicsPipeline(const std::string& vertShaderPath, const std::string& fragShaderPath,
                                 const PipelineConfigInfo& configInfo);
-    void CreateShaderModule(const std::vector<char>& code,
-                            VkShaderModule* shaderModule);
+    void CreateShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
   };
 }

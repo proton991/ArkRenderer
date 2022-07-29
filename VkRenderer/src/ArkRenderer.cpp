@@ -7,8 +7,7 @@
 
 namespace Ark
 {
-  ArkRenderer::ArkRenderer(WindowSystem& window, ArkDevice& device) :
-    m_window(window), m_arkDevice(device)
+  ArkRenderer::ArkRenderer(WindowSystem& window, ArkDevice& device) : m_window(window), m_arkDevice(device)
   {
     RecreateSwapChain();
     CreateCommandBuffers();
@@ -27,10 +26,8 @@ namespace Ark
     allocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocateInfo.commandPool = m_arkDevice.GetCommandPool();
-    allocateInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers
-      .size());
-    if (vkAllocateCommandBuffers(m_arkDevice.Device(), &allocateInfo,
-                                 m_commandBuffers.data()) != VK_SUCCESS)
+    allocateInfo.commandBufferCount = static_cast<uint32_t>(m_commandBuffers.size());
+    if (vkAllocateCommandBuffers(m_arkDevice.Device(), &allocateInfo, m_commandBuffers.data()) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to allocate command buffers!");
     }
@@ -49,20 +46,16 @@ namespace Ark
     vkDeviceWaitIdle(m_arkDevice.Device());
     if (m_arkSwapChain == nullptr)
     {
-      m_arkSwapChain = std::make_unique<
-        ArkSwapChain>(m_arkDevice, extent);
+      m_arkSwapChain = std::make_unique<ArkSwapChain>(m_arkDevice, extent);
     }
     else
     {
-      std::shared_ptr<ArkSwapChain> oldSwapChain = std::move(
-        m_arkSwapChain);
+      std::shared_ptr<ArkSwapChain> oldSwapChain = std::move(m_arkSwapChain);
 
-      m_arkSwapChain = std::make_unique<ArkSwapChain>(
-        m_arkDevice, extent, oldSwapChain);
+      m_arkSwapChain = std::make_unique<ArkSwapChain>(m_arkDevice, extent, oldSwapChain);
       if (!oldSwapChain->CompareSwapChainFormats(*m_arkSwapChain))
       {
-        throw std::runtime_error(
-          "Swap chain image(or depth) format has changed!");
+        throw std::runtime_error("Swap chain image(or depth) format has changed!");
       }
     }
   }
@@ -70,17 +63,14 @@ namespace Ark
   void ArkRenderer::FreeCommandBuffers()
   {
     vkFreeCommandBuffers(m_arkDevice.Device(), m_arkDevice.GetCommandPool(),
-                         static_cast<uint32_t>(m_commandBuffers.size()),
-                         m_commandBuffers.data());
+                         static_cast<uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
     m_commandBuffers.clear();
   }
 
 
   VkCommandBuffer ArkRenderer::BeginFrame()
   {
-    assert(
-      !m_isFrameStarted &&
-      "Can't call BeginFrame() while already in progress");
+    assert(!m_isFrameStarted && "Can't call BeginFrame() while already in progress");
     auto result = m_arkSwapChain->AcquireNextImage(&m_imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
@@ -95,29 +85,23 @@ namespace Ark
     auto commandBuffer = GetCurrentCommandBuffer();
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) !=
-      VK_SUCCESS)
+    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
     {
-      throw std::runtime_error(
-        "failed to begin recording command buffers!");
+      throw std::runtime_error("failed to begin recording command buffers!");
     }
     return commandBuffer;
   }
 
   void ArkRenderer::EndFrame()
   {
-    assert(
-      m_isFrameStarted &&
-      "Can't call EndFrame() while frame is not in progress");
+    assert(m_isFrameStarted && "Can't call EndFrame() while frame is not in progress");
     auto commandBuffer = GetCurrentCommandBuffer();
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to record command buffer!");
     }
-    auto result = m_arkSwapChain->SubmitCommandBuffers(
-      &commandBuffer, &m_imageIndex);
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
-      m_window.WasWindowResized())
+    auto result = m_arkSwapChain->SubmitCommandBuffers(&commandBuffer, &m_imageIndex);
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_window.WasWindowResized())
     {
       m_window.ResetWindowResizedFlag();
       RecreateSwapChain();
@@ -132,38 +116,30 @@ namespace Ark
 
   void ArkRenderer::BeginSwapChainRenderPass(VkCommandBuffer commandBuffer)
   {
-    assert(
-      m_isFrameStarted &&
-      "Can't call BeginSwapChainRenderPass() while frame not in progress");
+    assert(m_isFrameStarted && "Can't call BeginSwapChainRenderPass() while frame not in progress");
     assert(
       commandBuffer == GetCurrentCommandBuffer() &&
       "Can't begin render pass on command buffer from a different frame");
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = m_arkSwapChain->GetRenderPass();
-    renderPassInfo.framebuffer = m_arkSwapChain->GetFrameBuffer(
-      m_imageIndex);
+    renderPassInfo.framebuffer = m_arkSwapChain->GetFrameBuffer(m_imageIndex);
     renderPassInfo.renderArea.offset = {0, 0};
-    renderPassInfo.renderArea.extent = m_arkSwapChain->
-      GetSwapChainExtent();
+    renderPassInfo.renderArea.extent = m_arkSwapChain->GetSwapChainExtent();
 
     std::array<VkClearValue, 2> clearValues{};
     clearValues[0].color = {0.01f, 0.01f, 0.01f, 1.0f};
     clearValues[1].depthStencil = {1.0f, 0};
-    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.
-      size());
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
     renderPassInfo.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
-                         VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
-    viewport.width = static_cast<float>(m_arkSwapChain->GetSwapChainExtent()
-      .width);
-    viewport.height = static_cast<float>(m_arkSwapChain->
-                                         GetSwapChainExtent().height);
+    viewport.width = static_cast<float>(m_arkSwapChain->GetSwapChainExtent().width);
+    viewport.height = static_cast<float>(m_arkSwapChain->GetSwapChainExtent().height);
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
     VkRect2D scissor{{0, 0}, m_arkSwapChain->GetSwapChainExtent()};
@@ -173,9 +149,7 @@ namespace Ark
 
   void ArkRenderer::EndSwapChainRenderPass(VkCommandBuffer commandBuffer)
   {
-    assert(
-      m_isFrameStarted &&
-      "Can't call EndSwapChainRenderPass() while not in progress");
+    assert(m_isFrameStarted && "Can't call EndSwapChainRenderPass() while not in progress");
     assert(
       commandBuffer == GetCurrentCommandBuffer() &&
       "Can't end render pass on command buffer from a different frame");
