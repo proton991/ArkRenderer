@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ArkCamera.cpp" />
+    <ClCompile Include="src\ArkGameObject.cpp" />
     <ClCompile Include="src\ArkModel.cpp" />
     <ClCompile Include="src\ArkRenderer.cpp" />
     <ClCompile Include="src\FirstApp.cpp" />

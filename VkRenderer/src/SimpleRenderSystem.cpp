@@ -14,7 +14,7 @@ namespace Ark
   struct SimplePushConstantData
   {
     glm::mat4 transform{1.0f};
-    alignas(16) glm::vec3 color;
+    glm::mat4 normalMatrix{1.0f};
   };
 
   SimpleRenderSystem::SimpleRenderSystem(ArkDevice& device, VkRenderPass renderPass) : m_arkDevice(device)
@@ -36,13 +36,10 @@ namespace Ark
     auto projectionView = camera.GetProjMatrix() * camera.GetViewMatrix();
     for (auto& obj : gameObjects)
     {
-      //obj.m_transform.rotation.y = glm::mod(
-      //	obj.m_transform.rotation.y + 0.01f, glm::two_pi<float>());
-      //obj.m_transform.rotation.x = glm::mod(
-      //	obj.m_transform.rotation.x + 0.005f, glm::two_pi<float>());
       SimplePushConstantData push{};
-      push.color = obj.m_color;
-      push.transform = projectionView * obj.m_transform.Mat4();
+      auto modelMatrix = obj.m_transform.Mat4();
+      push.transform = projectionView * modelMatrix;
+      push.normalMatrix = obj.m_transform.NormalMat();
       vkCmdPushConstants(commandBuffer, m_pipelineLayout,
                          VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                          sizeof(SimplePushConstantData), &push);

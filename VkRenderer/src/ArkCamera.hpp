@@ -1,7 +1,7 @@
 #pragma once
 
 //libs
-#define GLM_FORCE_RADIANSk
+#define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 
@@ -16,7 +16,6 @@ namespace Ark
 
     void SetOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
 
-    void SetPerspectiveProjection(float fovY, float aspect, float near, float far);
 
     void SetViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
 
@@ -24,8 +23,6 @@ namespace Ark
     void SetViewTarget(glm::vec3 position, glm::vec3 target, glm::vec3 up = glm::vec3{0.f, -1.f, 0.f});
 
     void SetViewYXZ(glm::vec3 position, glm::vec3 rotation);
-    const glm::mat4& GetProjection() const { return m_projectionMatrix; }
-    const glm::mat4& GetView() const { return m_viewMatrix; }
 
     void SetAspect(const float aspect)
     {
@@ -37,10 +34,9 @@ namespace Ark
       return glm::lookAt(m_position, m_position + m_front, m_up);
     }
 
-    // TODO: optimize projection matrix calculation
     auto GetProjMatrix() const
     {
-      return glm::perspective(m_fovY, m_aspect, m_near, m_far);
+      return m_projectionMatrix;
     }
 
     void Update(const double deltaTime);
@@ -56,6 +52,7 @@ namespace Ark
       DOWN
     };
 
+    void SetPerspectiveProjection();
     // Processes input received from mouse.
     void UpdateView(const bool constrainPitch = true);
 
@@ -68,9 +65,9 @@ namespace Ark
     // Camera Attributes
     glm::vec3 m_position{0.0f, 0.0f, 0.0f};
     glm::vec3 m_front;
-    glm::vec3 m_up{0.0f, 1.0f, 0.0f};
+    glm::vec3 m_up{0.0f, -1.0f, 0.0f};
     glm::vec3 m_right;
-    const glm::vec3 m_worldUp{0.0f, 1.0f, 0.0f};
+    const glm::vec3 m_worldUp{0.0f, -1.0f, 0.0f};
 
     float m_aspect;
     float m_fovY;

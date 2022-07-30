@@ -70,12 +70,9 @@ namespace Ark
   {
     SimpleRenderSystem simpleRenderSystem{m_arkDevice, m_arkRenderer.GetSwapChainRenderPass()};
     ArkCamera camera{
-      glm::vec3(.0f, .0f, .0f), glm::vec3(0.f, 0.f, 2.5f), glm::radians(70.0f),
+      glm::vec3(.0f, .0f, -1.0f), glm::vec3(0.f, 0.f, 0.f), glm::radians(70.0f),
       m_arkRenderer.GetAspectRatio(), 0.1f, 100.0f
     };
-    //camera.SetViewDirection(glm::vec3(0.f), glm::vec3(0.5f, 0.f, 1.f));
-    //camera.SetViewTarget(glm::vec3(-1.f, -2.f, 2.f),
-    //                     glm::vec3(0.f, 0.f, 2.5f));
     bool hasOneSecondPassed{false};
     Timer timer(1.0, [&]()
     {
@@ -93,10 +90,7 @@ namespace Ark
       }
 
       float aspect = m_arkRenderer.GetAspectRatio();
-      // (right - left) / (bottom - top) = aspect 
       //camera.SetOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-      //camera.SetPerspectiveProjection(glm::radians(50.0f), aspect, 0.1f,
-      //                                10.0f);
       camera.SetAspect(aspect);
       const auto dt{timer.GetDelta()};
       InputManager::GetInstance().Update();
@@ -117,10 +111,16 @@ namespace Ark
   void FirstApp::LoadGameObjects()
   {
     std::shared_ptr<ArkModel> arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/smooth_vase.obj");
-    auto cube = ArkGameObject::Create();
-    cube.m_model = arkModel;
-    cube.m_transform.translation = {.0f, .0f, 2.5f};
-    cube.m_transform.scale = {1.5f, 1.5f, 1.5f};
-    m_gameObjects.push_back(std::move(cube));
+    auto gameObj = ArkGameObject::Create();
+    gameObj.m_model = arkModel;
+    gameObj.m_transform.translation = {-0.5f, 0.5f, 0.0f};
+    gameObj.m_transform.scale = {1.5f, 1.5f, 1.5f};
+    auto gameObj2 = ArkGameObject::Create();
+    std::shared_ptr<ArkModel> flatModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/flat_vase.obj");
+    gameObj2.m_model = flatModel;
+    gameObj2.m_transform.translation = { 0.5f, 0.5f, 0.0f };
+    gameObj2.m_transform.scale = { 1.5f, 1.5f, 1.5f };
+    m_gameObjects.push_back(std::move(gameObj));
+    m_gameObjects.push_back(std::move(gameObj2));
   }
 }

@@ -19,6 +19,7 @@ namespace Ark
     //m_yaw = -90.0f;
     //m_pitch = 0.0f;
     UpdateVectors();
+    SetPerspectiveProjection();
   }
 
   void ArkCamera::SetOrthographicProjection(float left, float right, float top, float bottom, float near,
@@ -33,16 +34,11 @@ namespace Ark
     m_projectionMatrix[3][2] = -near / (far - near);
   }
 
-  void ArkCamera::SetPerspectiveProjection(float fovY, float aspect, float near, float far)
+  void ArkCamera::SetPerspectiveProjection()
   {
-    assert(glm::abs(aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
-    const float tanHalfFovy = tan(fovY / 2.f);
-    m_projectionMatrix = glm::mat4{0.0f};
-    m_projectionMatrix[0][0] = 1.f / (aspect * tanHalfFovy);
-    m_projectionMatrix[1][1] = 1.f / (tanHalfFovy);
-    m_projectionMatrix[2][2] = far / (far - near);
-    m_projectionMatrix[2][3] = 1.f;
-    m_projectionMatrix[3][2] = -(far * near) / (far - near);
+    assert(glm::abs(m_aspect - std::numeric_limits<float>::epsilon()) > 0.0f);
+    m_projectionMatrix = glm::perspective(m_fovY, m_aspect, m_near, m_far);
+    m_projectionMatrix[1][1] *= -1;
   }
 
   void ArkCamera::SetViewDirection(glm::vec3 position, glm::vec3 direction, glm::vec3 up)
@@ -186,9 +182,9 @@ namespace Ark
         m_prevY = yPos;
         m_firstMouse = false;
       }
-
-      const auto xOffset = (xPos - m_prevX) * m_sensitivity;
-      const auto yOffset = (yPos - m_prevY) * m_sensitivity;
+      const auto xOffset = -1 * (xPos - m_prevX) * m_sensitivity;
+      //const auto yOffset = (yPos - m_prevY) * m_sensitivity;
+      const auto yOffset = -1 * (m_prevY - yPos) * m_sensitivity;
       // Reversed since y-coordinates go from bottom to top
 
       m_prevX = xPos;
