@@ -1,6 +1,6 @@
 #pragma once
 #include "ArkDevice.hpp"
-
+#include "ArkBuffer.hpp"
 //libs
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -53,13 +53,10 @@ namespace Ark
     bool m_hasIndexBuffer = false;
     ArkDevice& m_arkDevice;
 
-    VkBuffer m_vertexBuffer;
-    VkDeviceMemory m_vertexBufferMemory;
+    std::unique_ptr<ArkBuffer> m_vertexBuffer;
     uint32_t m_vertexCount;
 
-
-    VkBuffer m_indexBuffer;
-    VkDeviceMemory m_indexBufferMemory;
+    std::unique_ptr<ArkBuffer> m_indexBuffer;
     uint32_t m_indexCount;
   };
 }

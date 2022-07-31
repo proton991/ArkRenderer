@@ -31,16 +31,7 @@ namespace Ark
     CreateIndexBuffers(builder.indices);
   }
 
-  ArkModel::~ArkModel()
-  {
-    vkDestroyBuffer(m_arkDevice.Device(), m_vertexBuffer, nullptr);
-    vkFreeMemory(m_arkDevice.Device(), m_vertexBufferMemory, nullptr);
-    if (m_hasIndexBuffer)
-    {
-      vkDestroyBuffer(m_arkDevice.Device(), m_indexBuffer, nullptr);
-      vkFreeMemory(m_arkDevice.Device(), m_indexBufferMemory, nullptr);
-    }
-  }
+  ArkModel::~ArkModel() = default;
 
   std::unique_ptr<ArkModel> ArkModel::CreateModelFromFile(ArkDevice& device, const std::string& filePath)
   {
@@ -54,22 +45,26 @@ namespace Ark
   {
     m_vertexCount = static_cast<uint32_t>(vertices.size());
     assert(m_vertexCount >= 3 && "Vertex count must be at least 3");
-    VkDeviceSize bufferSize = sizeof(vertices[0]) * m_vertexCount;
-    VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
-    m_arkDevice.CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                             stagingBuffer, stagingBufferMemory);
-    void* data;
-    vkMapMemory(m_arkDevice.Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, vertices.data(), static_cast<size_t>(bufferSize));
-    vkUnmapMemory(m_arkDevice.Device(), stagingBufferMemory);
-    m_arkDevice.CreateBuffer(bufferSize, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_vertexBuffer, m_vertexBufferMemory);
-    m_arkDevice.CopyBuffer(stagingBuffer, m_vertexBuffer, bufferSize);
-    // free staging buffer
-    vkDestroyBuffer(m_arkDevice.Device(), stagingBuffer, nullptr);
-    vkFreeMemory(m_arkDevice.Device(), stagingBufferMemory, nullptr);
+    const VkDeviceSize bufferSize = sizeof(vertices[0]) * m_vertexCount;
+    uint32_t vertexSize = sizeof(vertices[0]);
+    ArkBuffer stagingBuffer{
+      m_arkDevice,
+      vertexSize,
+      m_vertexCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    };
+    stagingBuffer.Map();
+    stagingBuffer.WriteToBuffer((void*)vertices.data());
+
+    m_vertexBuffer = std::make_unique<ArkBuffer>(
+      m_arkDevice,
+      vertexSize,
+      m_vertexCount,
+      VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    m_arkDevice.CopyBuffer(stagingBuffer.GetBuffer(), m_vertexBuffer->GetBuffer(), bufferSize);
   }
 
   void ArkModel::CreateIndexBuffers(const std::vector<uint32_t>& indices)
@@ -78,31 +73,34 @@ namespace Ark
     m_hasIndexBuffer = m_indexCount > 0;
     if (!m_hasIndexBuffer) return;
     VkDeviceSize bufferSize = sizeof(indices[0]) * m_indexCount;
-    VkBuffer stagingBuffer;
-    VkDeviceMemory stagingBufferMemory;
-    m_arkDevice.CreateBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-                             stagingBuffer, stagingBufferMemory);
-    void* data;
-    vkMapMemory(m_arkDevice.Device(), stagingBufferMemory, 0, bufferSize, 0, &data);
-    memcpy(data, indices.data(), static_cast<size_t>(bufferSize));
-    vkUnmapMemory(m_arkDevice.Device(), stagingBufferMemory);
-    m_arkDevice.CreateBuffer(bufferSize, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-                             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_indexBuffer, m_indexBufferMemory);
-    m_arkDevice.CopyBuffer(stagingBuffer, m_indexBuffer, bufferSize);
-    // free staging buffer
-    vkDestroyBuffer(m_arkDevice.Device(), stagingBuffer, nullptr);
-    vkFreeMemory(m_arkDevice.Device(), stagingBufferMemory, nullptr);
+    uint32_t indexSize = sizeof(indices[0]);
+    ArkBuffer stagingBuffer{
+      m_arkDevice,
+      indexSize,
+      m_indexCount,
+      VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+      VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+    };
+    stagingBuffer.Map();
+    stagingBuffer.WriteToBuffer((void*)indices.data());
+    m_indexBuffer = std::make_unique<ArkBuffer>(
+      m_arkDevice,
+      indexSize,
+      m_indexCount,
+      VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+      VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+    );
+    m_arkDevice.CopyBuffer(stagingBuffer.GetBuffer(), m_indexBuffer->GetBuffer(), bufferSize);
   }
 
   void ArkModel::Bind(VkCommandBuffer commandBuffer)
   {
-    VkBuffer buffers[] = {m_vertexBuffer};
+    VkBuffer buffers[] = {m_vertexBuffer->GetBuffer()};
     VkDeviceSize offsets[] = {0};
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
     if (m_hasIndexBuffer)
     {
-      vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+      vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
     }
   }
 
