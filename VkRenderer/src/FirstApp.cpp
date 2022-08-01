@@ -21,7 +21,10 @@ namespace Ark
   struct GlobalUbo
   {
     glm::mat4 projectionView{1.0f};
-    glm::vec3 lightDirection = glm::normalize(glm::vec3{3.f, 0.f, 0.f});
+    glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };
+    glm::vec3 lightPosition{ -1.f };
+    alignas(16) glm::vec4 lightColor{ 1.f }; // (r, g, b, intensity)
+    /*glm::vec3 lightDirection = glm::normalize(glm::vec3{3.f, 0.f, 0.f});*/
   };
 
   FirstApp::FirstApp()
@@ -136,5 +139,12 @@ namespace Ark
     gameObj2.m_transform.scale = {1.5f, 1.5f, 1.5f};
     m_gameObjects.push_back(std::move(gameObj));
     m_gameObjects.push_back(std::move(gameObj2));
+
+    arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/quad.obj");
+    auto floor = ArkGameObject::Create();
+    floor.m_model = arkModel;
+    floor.m_transform.translation = { 0.5f, 0.5f, 0.0f };
+    floor.m_transform.scale = { 1.5f, 1.5f, 1.5f };
+    m_gameObjects.push_back(std::move(floor));
   }
 }
