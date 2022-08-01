@@ -157,6 +157,7 @@
   <ItemGroup>
     <ClCompile Include="src\ArkBuffer.cpp" />
     <ClCompile Include="src\ArkCamera.cpp" />
+    <ClCompile Include="src\ArkDescriptors.cpp" />
     <ClCompile Include="src\ArkGameObject.cpp" />
     <ClCompile Include="src\ArkModel.cpp" />
     <ClCompile Include="src\ArkRenderer.cpp" />
@@ -181,6 +182,8 @@
   <ItemGroup>
     <ClInclude Include="src\ArkBuffer.hpp" />
     <ClInclude Include="src\ArkCamera.hpp" />
+    <ClInclude Include="src\ArkDescriptors.hpp" />
+    <ClInclude Include="src\ArkFrameInfo.hpp" />
     <ClInclude Include="src\ArkGameObject.hpp" />
     <ClInclude Include="src\ArkModel.hpp" />
     <ClInclude Include="src\ArkRenderer.hpp" />

@@ -3,6 +3,7 @@
 #include "ArkGameObject.hpp"
 #include "ArkDevice.hpp"
 #include "ArkRenderer.hpp"
+#include "ArkDescriptors.hpp"
 #include <memory>
 
 namespace Ark
@@ -24,6 +25,7 @@ namespace Ark
     ArkDevice m_arkDevice{m_window};
     ArkRenderer m_arkRenderer{m_window, m_arkDevice};
 
+    std::unique_ptr<ArkDescriptorPool> m_globalPool{};
     std::vector<ArkGameObject> m_gameObjects;
   };
 }

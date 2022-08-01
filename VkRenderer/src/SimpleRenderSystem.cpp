@@ -13,13 +13,14 @@ namespace Ark
 {
   struct SimplePushConstantData
   {
-    glm::mat4 transform{1.0f};
+    glm::mat4 modelMatrix{1.0f};
     glm::mat4 normalMatrix{1.0f};
   };
 
-  SimpleRenderSystem::SimpleRenderSystem(ArkDevice& device, VkRenderPass renderPass) : m_arkDevice(device)
+  SimpleRenderSystem::SimpleRenderSystem(ArkDevice& device, VkRenderPass renderPass,
+                                         VkDescriptorSetLayout globalSetLayout) : m_arkDevice(device)
   {
-    CreatePipelineLayout();
+    CreatePipelineLayout(globalSetLayout);
     CreatePipeline(renderPass);
   }
 
@@ -28,38 +29,49 @@ namespace Ark
     vkDestroyPipelineLayout(m_arkDevice.Device(), m_pipelineLayout, nullptr);
   }
 
-  void SimpleRenderSystem::RenderGameObjects(VkCommandBuffer commandBuffer,
-                                             std::vector<ArkGameObject>& gameObjects, const ArkCamera& camera)
+  void SimpleRenderSystem::RenderGameObjects(FrameInfo& frameInfo, std::vector<ArkGameObject>& gameObjects)
   {
-    m_arkPipeline->Bind(commandBuffer);
+    m_arkPipeline->Bind(frameInfo.commandBuffer);
 
-    auto projectionView = camera.GetProjMatrix() * camera.GetViewMatrix();
+    auto projectionView = frameInfo.camera.GetProjMatrix() * frameInfo.camera.GetViewMatrix();
+    // only need to bind once!
+    vkCmdBindDescriptorSets(
+      frameInfo.commandBuffer,
+      VK_PIPELINE_BIND_POINT_GRAPHICS,
+      m_pipelineLayout,
+      0,
+      1,
+      &frameInfo.globalDescriptorSet,
+      0,
+      nullptr
+    );
     for (auto& obj : gameObjects)
     {
       SimplePushConstantData push{};
-      auto modelMatrix = obj.m_transform.Mat4();
-      push.transform = projectionView * modelMatrix;
+      push.modelMatrix = obj.m_transform.Mat4();;
       push.normalMatrix = obj.m_transform.NormalMat();
-      vkCmdPushConstants(commandBuffer, m_pipelineLayout,
+      vkCmdPushConstants(frameInfo.commandBuffer, m_pipelineLayout,
                          VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
                          sizeof(SimplePushConstantData), &push);
-      obj.m_model->Bind(commandBuffer);
-      obj.m_model->Draw(commandBuffer);
+      obj.m_model->Bind(frameInfo.commandBuffer);
+      obj.m_model->Draw(frameInfo.commandBuffer);
     }
   }
 
 
-  void SimpleRenderSystem::CreatePipelineLayout()
+  void SimpleRenderSystem::CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout)
   {
     VkPushConstantRange pushConstantRange{};
     pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     pushConstantRange.offset = 0;
     pushConstantRange.size = sizeof(SimplePushConstantData);
 
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
-    pipelineLayoutInfo.pSetLayouts = nullptr;
+    pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+    pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
     pipelineLayoutInfo.pushConstantRangeCount = 1;
     pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
     if (vkCreatePipelineLayout(m_arkDevice.Device(), &pipelineLayoutInfo, nullptr, &m_pipelineLayout) !=
