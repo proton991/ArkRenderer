@@ -26,6 +26,6 @@ namespace Ark
     ArkRenderer m_arkRenderer{m_window, m_arkDevice};
 
     std::unique_ptr<ArkDescriptorPool> m_globalPool{};
-    std::vector<ArkGameObject> m_gameObjects;
+    ArkGameObject::Map m_gameObjects;
   };
 }

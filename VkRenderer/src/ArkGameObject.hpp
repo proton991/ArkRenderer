@@ -3,7 +3,7 @@
 
 // libs
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <unordered_map>
 namespace Ark
 {
   struct TransformComponent
@@ -23,7 +23,7 @@ namespace Ark
   {
   public:
     using IdType = unsigned int;
-
+    using Map = std::unordered_map<IdType, ArkGameObject>;
     static ArkGameObject Create()
     {
       static IdType currentId = 0;

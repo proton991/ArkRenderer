@@ -29,11 +29,10 @@ namespace Ark
     vkDestroyPipelineLayout(m_arkDevice.Device(), m_pipelineLayout, nullptr);
   }
 
-  void SimpleRenderSystem::RenderGameObjects(FrameInfo& frameInfo, std::vector<ArkGameObject>& gameObjects)
+  void SimpleRenderSystem::RenderGameObjects(FrameInfo& frameInfo)
   {
     m_arkPipeline->Bind(frameInfo.commandBuffer);
 
-    auto projectionView = frameInfo.camera.GetProjMatrix() * frameInfo.camera.GetViewMatrix();
     // only need to bind once!
     vkCmdBindDescriptorSets(
       frameInfo.commandBuffer,
@@ -45,8 +44,9 @@ namespace Ark
       0,
       nullptr
     );
-    for (auto& obj : gameObjects)
+    for (auto& kv : frameInfo.gameObjects)
     {
+      auto& obj = kv.second;
       SimplePushConstantData push{};
       push.modelMatrix = obj.m_transform.Mat4();;
       push.normalMatrix = obj.m_transform.NormalMat();

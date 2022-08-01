@@ -1,5 +1,6 @@
 #pragma once
 #include "ArkCamera.hpp"
+#include "ArkGameObject.hpp"
 
 #include <vulkan/vulkan.h>
 
@@ -12,5 +13,6 @@ namespace Ark
     VkCommandBuffer commandBuffer;
     ArkCamera& camera;
     VkDescriptorSet globalDescriptorSet;
+    ArkGameObject::Map& gameObjects;
   };
 }

@@ -57,7 +57,7 @@ namespace Ark
       uboBuffers[i]->Map();
     }
     auto globalSetLayout = ArkDescriptorSetLayout::Builder(m_arkDevice)
-                           .AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+                           .AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
                            .Build();
     std::vector<VkDescriptorSet> globalDescriptorSets(ArkSwapChain::MAX_FRAMES_IN_FLIGHT);
     for (int i = 0; i < globalDescriptorSets.size(); i++)
@@ -72,7 +72,7 @@ namespace Ark
       m_arkDevice, m_arkRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()
     };
     ArkCamera camera{
-      glm::vec3(.0f, .0f, -1.0f), glm::vec3(0.f, 0.f, 0.f), glm::radians(70.0f),
+      glm::vec3(.0f, .0f, -2.5f), glm::vec3(0.f, 0.f, 0.f), glm::radians(70.0f),
       m_arkRenderer.GetAspectRatio(), 0.1f, 100.0f
     };
     bool hasOneSecondPassed{false};
@@ -107,7 +107,8 @@ namespace Ark
           frameTime,
           commandBuffer,
           camera,
-          globalDescriptorSets[frameIndex]
+          globalDescriptorSets[frameIndex],
+          m_gameObjects
         };
         // update
         GlobalUbo ubo{};
@@ -116,7 +117,7 @@ namespace Ark
         uboBuffers[frameIndex]->Flush();
         // render
         m_arkRenderer.BeginSwapChainRenderPass(commandBuffer);
-        simpleRenderSystem.RenderGameObjects(frameInfo, m_gameObjects);
+        simpleRenderSystem.RenderGameObjects(frameInfo);
         m_arkRenderer.EndSwapChainRenderPass(commandBuffer);
         m_arkRenderer.EndFrame();
       }
@@ -137,14 +138,14 @@ namespace Ark
     gameObj2.m_model = flatModel;
     gameObj2.m_transform.translation = {0.5f, 0.5f, 0.0f};
     gameObj2.m_transform.scale = {1.5f, 1.5f, 1.5f};
-    m_gameObjects.push_back(std::move(gameObj));
-    m_gameObjects.push_back(std::move(gameObj2));
+    m_gameObjects.emplace(gameObj.GetId(), std::move(gameObj));
+    m_gameObjects.emplace(gameObj2.GetId(), std::move(gameObj2));
 
     arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/quad.obj");
     auto floor = ArkGameObject::Create();
     floor.m_model = arkModel;
     floor.m_transform.translation = { 0.5f, 0.5f, 0.0f };
-    floor.m_transform.scale = { 1.5f, 1.5f, 1.5f };
-    m_gameObjects.push_back(std::move(floor));
+    floor.m_transform.scale = { 3.f, 1.f, 3.f };
+    m_gameObjects.emplace(floor.GetId(), std::move(floor));
   }
 }

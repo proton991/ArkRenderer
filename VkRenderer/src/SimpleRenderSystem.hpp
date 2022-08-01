@@ -17,7 +17,7 @@ namespace Ark
 
     SimpleRenderSystem(const SimpleRenderSystem&) = delete;
     SimpleRenderSystem& operator=(const SimpleRenderSystem&) = delete;
-    void RenderGameObjects(FrameInfo& frameInfo, std::vector<ArkGameObject>& gameObjects);
+    void RenderGameObjects(FrameInfo& frameInfo);
 
   private:
     void CreatePipelineLayout(VkDescriptorSetLayout globalSetLayout);
