@@ -55,8 +55,8 @@ namespace Ark
     shaderStages[1].pNext = nullptr;
     shaderStages[1].pSpecializationInfo = nullptr;
 
-    auto bindingDescriptions = ArkModel::Vertex::GetBindingDescriptions();
-    auto attributeDescriptions = ArkModel::Vertex::GetAttributeDescriptions();
+    auto& bindingDescriptions = configInfo.bindingDescriptions;
+    auto& attributeDescriptions = configInfo.attributeDescriptions;
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
@@ -175,5 +175,8 @@ namespace Ark
     configInfo.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.dynamicStatesEnables.
       size());
     configInfo.dynamicStateInfo.flags = 0;
+
+    configInfo.bindingDescriptions = ArkModel::Vertex::GetBindingDescriptions();
+    configInfo.attributeDescriptions = ArkModel::Vertex::GetAttributeDescriptions();
   }
 }

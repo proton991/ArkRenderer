@@ -1,7 +1,8 @@
 #include "FirstApp.hpp"
 #include "ArkCamera.hpp"
 #include "ArkBuffer.hpp"
-#include "SimpleRenderSystem.hpp"
+#include "systems/SimpleRenderSystem.hpp"
+#include "systems/PointLightSystem.hpp"
 //libs
 //#define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -20,10 +21,11 @@ namespace Ark
 {
   struct GlobalUbo
   {
-    glm::mat4 projectionView{1.0f};
-    glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, .02f };
-    glm::vec3 lightPosition{ -1.f };
-    alignas(16) glm::vec4 lightColor{ 1.f }; // (r, g, b, intensity)
+    glm::mat4 projection{1.0f};
+    glm::mat4 view{1.0f};
+    glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};
+    glm::vec3 lightPosition{-1.f};
+    alignas(16) glm::vec4 lightColor{1.f}; // (r, g, b, intensity)
     /*glm::vec3 lightDirection = glm::normalize(glm::vec3{3.f, 0.f, 0.f});*/
   };
 
@@ -71,6 +73,9 @@ namespace Ark
     SimpleRenderSystem simpleRenderSystem{
       m_arkDevice, m_arkRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()
     };
+    PointLightSystem pointLightSystem{
+      m_arkDevice, m_arkRenderer.GetSwapChainRenderPass(), globalSetLayout->GetDescriptorSetLayout()
+    };
     ArkCamera camera{
       glm::vec3(.0f, .0f, -2.5f), glm::vec3(0.f, 0.f, 0.f), glm::radians(70.0f),
       m_arkRenderer.GetAspectRatio(), 0.1f, 100.0f
@@ -112,12 +117,14 @@ namespace Ark
         };
         // update
         GlobalUbo ubo{};
-        ubo.projectionView = camera.GetProjMatrix() * camera.GetViewMatrix();
+        ubo.projection = camera.GetProjMatrix();
+        ubo.view = camera.GetViewMatrix();
         uboBuffers[frameIndex]->WriteToBuffer(&ubo);
         uboBuffers[frameIndex]->Flush();
         // render
         m_arkRenderer.BeginSwapChainRenderPass(commandBuffer);
         simpleRenderSystem.RenderGameObjects(frameInfo);
+        pointLightSystem.Render(frameInfo);
         m_arkRenderer.EndSwapChainRenderPass(commandBuffer);
         m_arkRenderer.EndFrame();
       }
@@ -144,8 +151,8 @@ namespace Ark
     arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/quad.obj");
     auto floor = ArkGameObject::Create();
     floor.m_model = arkModel;
-    floor.m_transform.translation = { 0.5f, 0.5f, 0.0f };
-    floor.m_transform.scale = { 3.f, 1.f, 3.f };
+    floor.m_transform.translation = {0.5f, 0.5f, 0.0f};
+    floor.m_transform.scale = {3.f, 1.f, 3.f};
     m_gameObjects.emplace(floor.GetId(), std::move(floor));
   }
 }

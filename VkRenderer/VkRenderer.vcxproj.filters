@@ -42,7 +42,7 @@
     <ClCompile Include="src\ArkRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\SimpleRenderSystem.cpp">
+    <ClCompile Include="src\systems\SimpleRenderSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ArkCamera.cpp">
@@ -57,6 +57,9 @@
     <ClCompile Include="src\ArkDescriptors.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\systems\PointLightSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\build_shaders.bat">
@@ -66,6 +69,8 @@
   <ItemGroup>
     <CustomBuild Include="shaders\triangle.frag" />
     <CustomBuild Include="shaders\triangle.vert" />
+    <CustomBuild Include="shaders\point_light.frag" />
+    <CustomBuild Include="shaders\point_light.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\WindowSystem.hpp">
@@ -95,7 +100,7 @@
     <ClInclude Include="src\ArkRenderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\SimpleRenderSystem.hpp">
+    <ClInclude Include="src\systems\SimpleRenderSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ArkCamera.hpp">
@@ -117,6 +122,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ArkDescriptors.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\systems\PointLightSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
