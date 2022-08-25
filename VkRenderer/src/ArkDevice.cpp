@@ -5,47 +5,50 @@
 #include <set>
 #include <unordered_set>
 
+#include "core/Debug.hpp"
+#include "core/Initializers.hpp"
+
 
 namespace Ark
 {
   // local callback functions
-  static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                      VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                      const VkDebugUtilsMessengerCallbackDataEXT*
-                                                      pCallbackData, void* pUserData)
-  {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+  //static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+  //                                                    VkDebugUtilsMessageTypeFlagsEXT messageType,
+  //                                                    const VkDebugUtilsMessengerCallbackDataEXT*
+  //                                                    pCallbackData, void* pUserData)
+  //{
+  //  std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
-    return VK_FALSE;
-  }
+  //  return VK_FALSE;
+  //}
 
-  VkResult CreateDebugUtilsMessengerEXT(VkInstance instance,
-                                        const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-                                        const VkAllocationCallbacks* pAllocator,
-                                        VkDebugUtilsMessengerEXT* pDebugMessenger)
-  {
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-      instance, "vkCreateDebugUtilsMessengerEXT");
-    if (func != nullptr)
-    {
-      return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
-    }
-    else
-    {
-      return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-  }
+  //VkResult CreateDebugUtilsMessengerEXT(VkInstance instance,
+  //                                      const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+  //                                      const VkAllocationCallbacks* pAllocator,
+  //                                      VkDebugUtilsMessengerEXT* pDebugMessenger)
+  //{
+  //  auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+  //    instance, "vkCreateDebugUtilsMessengerEXT");
+  //  if (func != nullptr)
+  //  {
+  //    return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
+  //  }
+  //  else
+  //  {
+  //    return VK_ERROR_EXTENSION_NOT_PRESENT;
+  //  }
+  //}
 
-  void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
-                                     const VkAllocationCallbacks* pAllocator)
-  {
-    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
-      instance, "vkDestroyDebugUtilsMessengerEXT");
-    if (func != nullptr)
-    {
-      func(instance, debugMessenger, pAllocator);
-    }
-  }
+  //void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger,
+  //                                   const VkAllocationCallbacks* pAllocator)
+  //{
+  //  auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+  //    instance, "vkDestroyDebugUtilsMessengerEXT");
+  //  if (func != nullptr)
+  //  {
+  //    func(instance, debugMessenger, pAllocator);
+  //  }
+  //}
 
   // class member functions
   ArkDevice::ArkDevice(WindowSystem& window) : m_window{window}
@@ -65,7 +68,7 @@ namespace Ark
 
     if (enableValidationLayers)
     {
-      DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
+      Debug::DestroyDebugUtilsMessengerEXT(m_instance, m_debugMessenger, nullptr);
     }
 
     vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
@@ -250,7 +253,7 @@ namespace Ark
       VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
       VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
+    createInfo.pfnUserCallback = Initializer::debugCallback;
     createInfo.pUserData = nullptr; // Optional
   }
 
@@ -259,7 +262,7 @@ namespace Ark
     if (!enableValidationLayers) return;
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
     PopulateDebugMessengerCreateInfo(createInfo);
-    if (CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
+    if (Debug::CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
     {
       throw std::runtime_error("failed to set up debug messenger!");
     }

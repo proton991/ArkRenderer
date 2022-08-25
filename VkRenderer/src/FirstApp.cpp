@@ -46,7 +46,7 @@ namespace Ark
   void FirstApp::Run()
   {
     std::vector<std::unique_ptr<ArkBuffer>> uboBuffers(ArkSwapChain::MAX_FRAMES_IN_FLIGHT);
-    for (int i = 0; i < uboBuffers.size(); i++)
+    for (uint32_t i = 0; i < uboBuffers.size(); i++)
     {
       uboBuffers[i] = std::make_unique<ArkBuffer>(
         m_arkDevice,
