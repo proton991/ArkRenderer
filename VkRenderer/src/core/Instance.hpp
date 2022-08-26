@@ -14,15 +14,18 @@ namespace Ark
   public:
     NON_COPYABLE(Instance)
     Instance(bool enableValidationLayers = true);
+    void Create();
     ~Instance();
     [[nodiscard]] VkInstance Get() const { return m_instance; }
-    std::vector<std::string> m_supportedInstanceExtensions;
+    std::vector<const char*> m_requiredExtensions;
   private:
     const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
-    std::vector<const char*> GetRequiredInstanceExtensions() const;
-    void HasGlfwRequiredInstanceExtensions() const;
+    void GetRequiredInstanceExtensions();
+    void CheckExtensionsSupport();
+    bool CheckValidationLayerSupport();
     void SetupDebugMessenger();
-    VkInstance m_instance{};
+    VkInstance m_instance = VK_NULL_HANDLE;
+    std::vector<const char*> m_supportedExtensions;
     std::vector<VkPhysicalDevice> m_physicalDevices;
     bool m_enableValidationLayers;
     VkDebugUtilsMessengerEXT m_debugMessenger;

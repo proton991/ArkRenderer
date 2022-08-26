@@ -8,9 +8,33 @@
 namespace Ark
 {
 
-  Instance::Instance(const bool enableValidationLayers)
-    : m_enableValidationLayers(enableValidationLayers)
+  /**
+   * \brief Instance Class Constructor
+   * \param enableValidationLayers flag for enabling validation layer
+   */
+  Instance::Instance(const bool enableValidationLayers) : m_enableValidationLayers(enableValidationLayers)
   {
+    // Enable Validation Layer if required
+    if (enableValidationLayers)
+    {
+      if (!CheckValidationLayerSupport())
+      {
+        throw std::runtime_error("validation layers requested, but not available!");
+      }
+      SetupDebugMessenger();
+    }
+    GetRequiredInstanceExtensions();
+  }
+
+  void Instance::Create()
+  {
+    // Check if instance has already been created
+    if (m_instance != VK_NULL_HANDLE) 
+      return;
+
+    // Check extension support before creating instances
+    CheckExtensionsSupport();
+
     VkApplicationInfo applicationInfo = {};
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     applicationInfo.pApplicationName = "VkRenderer";
@@ -22,10 +46,9 @@ namespace Ark
     VkInstanceCreateInfo instanceCreateInfo = Initializer::InstanceCreateInfo();
     instanceCreateInfo.pApplicationInfo = &applicationInfo;
 
-    auto extensions = GetRequiredInstanceExtensions();
-    instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-    instanceCreateInfo.ppEnabledExtensionNames = extensions.data();
-    if (enableValidationLayers)
+    instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(m_requiredExtensions.size());
+    instanceCreateInfo.ppEnabledExtensionNames = m_requiredExtensions.data();
+    if (m_enableValidationLayers)
     {
       instanceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(validationLayers.size());
       instanceCreateInfo.ppEnabledLayerNames = validationLayers.data();
@@ -34,13 +57,7 @@ namespace Ark
     {
       instanceCreateInfo.enabledLayerCount = 0;
     }
-    VK_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance),
-                    "Vulkan Instance creation");
-    HasGlfwRequiredInstanceExtensions();
-    if (enableValidationLayers)
-    {
-      SetupDebugMessenger();
-    }
+    VK_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance), "Vulkan Instance creation");
   }
 
   Instance::~Instance()
@@ -56,7 +73,7 @@ namespace Ark
     }
   }
 
-  std::vector<const char*> Instance::GetRequiredInstanceExtensions() const
+  void Instance::GetRequiredInstanceExtensions()
   {
     uint32_t glfwExtensionCount = 0;
     const char** glfwExtensions;
@@ -68,34 +85,73 @@ namespace Ark
     {
       extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
-    return extensions;
+    for (auto& extension : extensions)
+    {
+      m_requiredExtensions.push_back(extension);
+    }
   }
 
-  void Instance::HasGlfwRequiredInstanceExtensions() const
+  void Instance::CheckExtensionsSupport()
   {
     uint32_t extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
-    std::vector<VkExtensionProperties> extensions(extensionCount);
-    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
-
+    if (extensionCount > 0)
+    {
+      std::vector<VkExtensionProperties> extensions(extensionCount);
+      vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
+      for (VkExtensionProperties extension : extensions)
+      {
+        m_supportedExtensions.push_back(extension.extensionName);
+      }
+    }
     std::cout << "available extensions:" << std::endl;
     std::unordered_set<std::string> available;
-    for (const auto& extension : extensions)
+    for (const auto& extension : m_supportedExtensions)
     {
-      std::cout << "\t" << extension.extensionName << std::endl;
-      available.insert(extension.extensionName);
+      std::cout << "\t" << extension << std::endl;
+      available.insert(extension);
     }
 
     std::cout << "required extensions:" << std::endl;
-    auto requiredExtensions = GetRequiredInstanceExtensions();
-    for (const auto& required : requiredExtensions)
+    for (const auto& required : m_requiredExtensions)
     {
       std::cout << "\t" << required << std::endl;
-      if (available.find(required) == available.end())
+      if (std::find(m_supportedExtensions.begin(), m_supportedExtensions.end(), required) ==
+        m_supportedExtensions.end())
       {
         throw std::runtime_error("Missing required glfw extension");
       }
     }
+  }
+
+  bool Instance::CheckValidationLayerSupport()
+  {
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const char* layerName : validationLayers)
+    {
+      bool layerFound = false;
+
+      for (const auto& layerProperties : availableLayers)
+      {
+        if (strcmp(layerName, layerProperties.layerName) == 0)
+        {
+          layerFound = true;
+          break;
+        }
+      }
+
+      if (!layerFound)
+      {
+        return false;
+      }
+    }
+
+    return true;
   }
 
 

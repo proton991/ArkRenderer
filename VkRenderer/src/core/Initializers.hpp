@@ -11,6 +11,8 @@
 #pragma once
 
 #include <vector>
+
+#include "Debug.hpp"
 #include "vulkan/vulkan.h"
 
 namespace Ark::Initializer
@@ -669,15 +671,7 @@ namespace Ark::Initializer
     return instanceCreateInfo;
   }
 
-  static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT*
-    pCallbackData, void* pUserData)
-  {
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
-    return VK_FALSE;
-  }
 
   VkDebugUtilsMessengerCreateInfoEXT DebugUtilsMessengerCreateInfoEXT()
   {
@@ -687,7 +681,7 @@ namespace Ark::Initializer
       VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
       VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
+    createInfo.pfnUserCallback = Debug::debugCallback;
     createInfo.pUserData = nullptr; // Optional
     return createInfo;
   }

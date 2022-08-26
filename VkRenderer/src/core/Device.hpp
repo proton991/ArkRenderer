@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Instance.hpp"
+
 #include <string>
 #include <vector>
 #include <vulkan/vulkan.h>
@@ -29,7 +31,6 @@ namespace Ark
   public:
     Device();
   private:
-
     /**
      * \brief Physical Device
      */
@@ -39,11 +40,19 @@ namespace Ark
      */
     VkDevice m_logicalDevice;
 
+    /**
+     * \brief Physical device properties
+     */
     VkPhysicalDeviceProperties m_properties;
 
+    /**
+     * \brief Physical device features
+     */
     VkPhysicalDeviceFeatures m_features;
-
-    VkPhysicalDeviceFeatures m_enabledFeatures;
+    /**
+     * \brief Enabled physical device features
+     */
+    VkPhysicalDeviceFeatures m_enabledFeatures{};
 
     VkPhysicalDeviceMemoryProperties m_memoryProperties;
 
