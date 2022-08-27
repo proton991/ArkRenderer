@@ -155,16 +155,12 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\apps\ArkAppBase.cpp" />
     <ClCompile Include="src\ArkBuffer.cpp" />
     <ClCompile Include="src\ArkCamera.cpp" />
     <ClCompile Include="src\ArkDescriptors.cpp" />
     <ClCompile Include="src\ArkGameObject.cpp" />
     <ClCompile Include="src\ArkModel.cpp" />
     <ClCompile Include="src\ArkRenderer.cpp" />
-    <ClCompile Include="src\core\Device.cpp" />
-    <ClCompile Include="src\core\Instance.cpp" />
-    <ClCompile Include="src\core\SwapChain.cpp" />
     <ClCompile Include="src\FirstApp.cpp" />
     <ClCompile Include="src\ArkDevice.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -191,7 +187,6 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\apps\ArkAppBase.hpp" />
     <ClInclude Include="src\ArkBuffer.hpp" />
     <ClInclude Include="src\ArkCamera.hpp" />
     <ClInclude Include="src\ArkDescriptors.hpp" />
@@ -200,12 +195,7 @@
     <ClInclude Include="src\ArkModel.hpp" />
     <ClInclude Include="src\ArkRenderer.hpp" />
     <ClInclude Include="src\ArkUtils.hpp" />
-    <ClInclude Include="src\core\Debug.hpp" />
-    <ClInclude Include="src\core\Device.hpp" />
-    <ClInclude Include="src\core\Initializers.hpp" />
-    <ClInclude Include="src\core\Instance.hpp" />
-    <ClInclude Include="src\core\SwapChain.hpp" />
-    <ClInclude Include="src\core\Utils.hpp" />
+    <ClInclude Include="src\Debug.hpp" />
     <ClInclude Include="src\FirstApp.hpp" />
     <ClInclude Include="src\ArkDevice.hpp" />
     <ClInclude Include="src\ArkPipleline.hpp" />
