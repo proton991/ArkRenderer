@@ -19,23 +19,22 @@
 
 namespace Ark
 {
-  struct GlobalUbo
-  {
-    glm::mat4 projection{1.0f};
-    glm::mat4 view{1.0f};
-    glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f};
-    glm::vec3 lightPosition{-1.f};
-    alignas(16) glm::vec4 lightColor{1.f}; // (r, g, b, intensity)
-    /*glm::vec3 lightDirection = glm::normalize(glm::vec3{3.f, 0.f, 0.f});*/
-  };
-
   FirstApp::FirstApp()
   {
     m_globalPool = ArkDescriptorPool::Builder(m_arkDevice)
                    .SetMaxSets(ArkSwapChain::MAX_FRAMES_IN_FLIGHT)
                    .AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, ArkSwapChain::MAX_FRAMES_IN_FLIGHT)
                    .Build();
-
+    m_framePools.resize(ArkSwapChain::MAX_FRAMES_IN_FLIGHT);
+    auto framePoolBuilder = ArkDescriptorPool::Builder(m_arkDevice)
+                            .SetMaxSets(1000)
+                            .AddPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000)
+                            .AddPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000)
+                            .SetPoolFlags(VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT);
+    for (uint32_t i = 0; i < m_framePools.size(); i++)
+    {
+      m_framePools[i] = framePoolBuilder.Build();
+    }
     LoadGameObjects();
   }
 
@@ -62,7 +61,7 @@ namespace Ark
                            .AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
                            .Build();
     std::vector<VkDescriptorSet> globalDescriptorSets(ArkSwapChain::MAX_FRAMES_IN_FLIGHT);
-    for (int i = 0; i < globalDescriptorSets.size(); i++)
+    for (uint32_t i = 0; i < globalDescriptorSets.size(); i++)
     {
       auto bufferInfo = uboBuffers[i]->DescriptorInfo();
       ArkDescriptorWriter(*globalSetLayout, *m_globalPool)
@@ -107,13 +106,15 @@ namespace Ark
       if (auto commandBuffer = m_arkRenderer.BeginFrame())
       {
         int frameIndex = m_arkRenderer.GetFrameIndex();
+        m_framePools[frameIndex]->ResetPool();
         FrameInfo frameInfo{
           frameIndex,
           frameTime,
           commandBuffer,
           camera,
           globalDescriptorSets[frameIndex],
-          m_gameObjects
+          *m_framePools[frameIndex],
+          m_gameObjectManager.m_gameObjects
         };
         // update
         GlobalUbo ubo{};
@@ -136,23 +137,24 @@ namespace Ark
   void FirstApp::LoadGameObjects()
   {
     std::shared_ptr<ArkModel> arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/smooth_vase.obj");
-    auto gameObj = ArkGameObject::Create();
+    auto& gameObj = m_gameObjectManager.CreateGameObject();
     gameObj.m_model = arkModel;
     gameObj.m_transform.translation = {-0.5f, 0.5f, 0.0f};
     gameObj.m_transform.scale = {1.5f, 1.5f, 1.5f};
-    auto gameObj2 = ArkGameObject::Create();
-    std::shared_ptr<ArkModel> flatModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/flat_vase.obj");
-    gameObj2.m_model = flatModel;
+
+    auto& gameObj2 = m_gameObjectManager.CreateGameObject();
+    arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/flat_vase.obj");
+    gameObj2.m_model = arkModel;
     gameObj2.m_transform.translation = {0.5f, 0.5f, 0.0f};
     gameObj2.m_transform.scale = {1.5f, 1.5f, 1.5f};
-    m_gameObjects.emplace(gameObj.GetId(), std::move(gameObj));
-    m_gameObjects.emplace(gameObj2.GetId(), std::move(gameObj2));
+
 
     arkModel = ArkModel::CreateModelFromFile(m_arkDevice, "models/quad.obj");
-    auto floor = ArkGameObject::Create();
+    std::shared_ptr texture = Texture::CreateTextureFromFile(m_arkDevice, "textures/missing.png");
+    auto& floor = m_gameObjectManager.CreateGameObject();;
     floor.m_model = arkModel;
+    floor.m_diffuseMap = texture;
     floor.m_transform.translation = {0.5f, 0.5f, 0.0f};
     floor.m_transform.scale = {3.f, 1.f, 3.f};
-    m_gameObjects.emplace(floor.GetId(), std::move(floor));
   }
 }

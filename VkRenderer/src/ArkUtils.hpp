@@ -1,7 +1,7 @@
 #pragma once
 
 #include <functional>
-
+#include <stdexcept>
 #define NON_COPYABLE(ClassName) \
 	ClassName(const ClassName&) = delete; \
 	ClassName(ClassName&&) = delete; \
@@ -58,7 +58,7 @@ namespace Ark
 		}
 	}
 
-	void VK_CHECK_RESULT(VkResult result, const char* operation)
+	inline void VK_CHECK_RESULT(VkResult result, const char* operation)
 	{
 		if (result != VK_SUCCESS)
 		{

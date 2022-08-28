@@ -80,7 +80,13 @@ namespace Ark
                              VkImage& image, VkDeviceMemory& imageMemory);
 
     VkPhysicalDeviceProperties properties;
-
+    void TransitionImageLayout(
+      VkImage image,
+      VkFormat format,
+      VkImageLayout oldLayout,
+      VkImageLayout newLayout,
+      uint32_t mipLevels = 1,
+      uint32_t layerCount = 1);
   private:
     void CreateInstance();
     void SetupDebugMessenger();

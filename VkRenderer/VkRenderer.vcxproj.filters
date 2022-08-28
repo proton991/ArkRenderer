@@ -60,6 +60,9 @@
     <ClCompile Include="src\systems\PointLightSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\build_shaders.bat">
@@ -67,8 +70,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="shaders\triangle.frag" />
-    <CustomBuild Include="shaders\triangle.vert" />
+    <CustomBuild Include="shaders\simple.frag" />
+    <CustomBuild Include="shaders\simple.vert" />
     <CustomBuild Include="shaders\point_light.frag" />
     <CustomBuild Include="shaders\point_light.vert" />
   </ItemGroup>
@@ -128,6 +131,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Debug.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

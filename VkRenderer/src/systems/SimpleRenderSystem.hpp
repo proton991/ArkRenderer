@@ -26,5 +26,7 @@ namespace Ark
     ArkDevice& m_arkDevice;
     std::unique_ptr<ArkPipeline> m_arkPipeline;
     VkPipelineLayout m_pipelineLayout;
+
+    std::unique_ptr<ArkDescriptorSetLayout> m_renderSystemLayout;
   };
 }

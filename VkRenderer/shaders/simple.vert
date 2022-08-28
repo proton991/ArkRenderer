@@ -10,6 +10,7 @@ layout(location = 3) in vec2 uv;
 layout(location = 0) out vec3 fragColor;
 layout(location = 1) out vec3 fragPosWorld;
 layout(location = 2) out vec3 fragNormalWorld;
+layout (location = 3) out vec2 fragUv;
 
 layout(set = 0, binding = 0) uniform GlobalUbo {
     mat4 projection;
@@ -18,6 +19,12 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
     vec3 lightPosition;
     vec4 lightColor;
 }ubo;
+
+layout(set = 1, binding = 0) uniform GameObjectBufferData {
+  mat4 modelMatrix;
+  mat4 normalMatrix;
+} gameObject;
+
 layout(push_constant) uniform Push {
     mat4 modelMatrix; 
     mat4 normalMatrix;
@@ -31,5 +38,5 @@ void main() {
     fragNormalWorld = normalize(mat3(push.normalMatrix) * normal);
     fragPosWorld = positionWorld.xyz;
     fragColor = color;
-
+    fragUv = uv;
 }

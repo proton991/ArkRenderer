@@ -169,14 +169,15 @@
     <ClCompile Include="src\ArkSwapChain.cpp" />
     <ClCompile Include="src\systems\PointLightSystem.cpp" />
     <ClCompile Include="src\systems\SimpleRenderSystem.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\WindowSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\build_shaders.bat" />
-    <CustomBuild Include="shaders\triangle.frag">
+    <CustomBuild Include="shaders\simple.frag">
       <FileType>Document</FileType>
     </CustomBuild>
-    <CustomBuild Include="shaders\triangle.vert">
+    <CustomBuild Include="shaders\simple.vert">
       <FileType>Document</FileType>
     </CustomBuild>
     <CustomBuild Include="shaders\point_light.frag">
@@ -204,6 +205,7 @@
     <ClInclude Include="src\ArkSwapChain.hpp" />
     <ClInclude Include="src\systems\PointLightSystem.hpp" />
     <ClInclude Include="src\systems\SimpleRenderSystem.hpp" />
+    <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\Timer.hpp" />
     <ClInclude Include="src\WindowSystem.hpp" />
   </ItemGroup>

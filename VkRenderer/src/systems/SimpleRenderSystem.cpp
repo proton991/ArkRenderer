@@ -47,6 +47,24 @@ namespace Ark
     for (auto& kv : frameInfo.gameObjects)
     {
       auto& obj = kv.second;
+      if (obj.m_model == nullptr) continue;
+
+      auto bufferInfo = obj.GetBufferInfo(frameInfo.frameIndex);
+      auto imageInfo = obj.m_diffuseMap->GetImageInfo();
+      VkDescriptorSet gameObjectDescriptorSet;
+      ArkDescriptorWriter(*m_renderSystemLayout, frameInfo.frameDescriptorPool)
+        .WriteBuffer(0, &bufferInfo)
+        .WriteImage(1, &imageInfo)
+        .Build(gameObjectDescriptorSet);
+      vkCmdBindDescriptorSets(
+        frameInfo.commandBuffer,
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        m_pipelineLayout,
+        1, // starting set (0 is the globalDescriptorSet, 1 is the set specific to this system)
+        1, // set count
+        &gameObjectDescriptorSet,
+        0,
+        nullptr);
       SimplePushConstantData push{};
       push.modelMatrix = obj.m_transform.Mat4();;
       push.normalMatrix = obj.m_transform.NormalMat();
@@ -65,8 +83,15 @@ namespace Ark
     pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     pushConstantRange.offset = 0;
     pushConstantRange.size = sizeof(SimplePushConstantData);
-
-    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+    m_renderSystemLayout = ArkDescriptorSetLayout::Builder(m_arkDevice)
+                           .AddBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                       VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT)
+                           .AddBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                       VK_SHADER_STAGE_FRAGMENT_BIT)
+                           .Build();
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{
+      globalSetLayout, m_renderSystemLayout->GetDescriptorSetLayout()
+    };
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -88,7 +113,7 @@ namespace Ark
     ArkPipeline::DefaultPipelineConfigInfo(pipelineConfig);
     pipelineConfig.renderPass = renderPass;
     pipelineConfig.pipelineLayout = m_pipelineLayout;
-    m_arkPipeline = std::make_unique<ArkPipeline>(m_arkDevice, "shaders/triangle.vert.spv",
-                                                  "shaders/triangle.frag.spv", pipelineConfig);
+    m_arkPipeline = std::make_unique<ArkPipeline>(m_arkDevice, "shaders/simple.vert.spv",
+                                                  "shaders/simple.frag.spv", pipelineConfig);
   }
 }
