@@ -3,22 +3,12 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <string>
+#include <vector>
 
 namespace Ark
 {
   class WindowSystem
   {
-  private:
-    void Init();
-    static void FrameBufferResizedCallback(GLFWwindow* window, int width, int height);
-    int m_width;
-    int m_height;
-    bool m_frameBufferResized = false;
-    std::string m_windowName;
-    bool m_showCursor{false};
-    GLFWwindow* m_window;
-    bool m_shouldClose{false};
-
   public:
     WindowSystem(int w, int h, const std::string& name);
     ~WindowSystem();
@@ -29,6 +19,7 @@ namespace Ark
     void CreateWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
     bool ShouldClose() const { return glfwWindowShouldClose(m_window); }
     void Update();
+    GLFWwindow* Handle() const { return m_window; }
 
     VkExtent2D GetExtent() const
     {
@@ -37,8 +28,19 @@ namespace Ark
 
     void EnableCursor() const;
     void DisableCursor() const;
-
     bool WasWindowResized() const { return m_frameBufferResized; }
     void ResetWindowResizedFlag() { m_frameBufferResized = false; }
+
+  private:
+    void Init();
+    static void FrameBufferResizedCallback(GLFWwindow* window, int width, int height);
+
+    int m_width;
+    int m_height;
+    bool m_frameBufferResized = false;
+    std::string m_windowName;
+    bool m_showCursor{ false };
+    GLFWwindow* m_window;
+    bool m_shouldClose{ false };
   };
 }
