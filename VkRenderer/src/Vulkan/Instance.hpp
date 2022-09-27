@@ -4,13 +4,11 @@
 
 namespace Vulkan
 {
-  
-
   class Instance final
   {
   public:
     VULKAN_NON_COPIABLE(Instance)
-    Instance( const std::vector<const char*>& validationLayers, uint32_t vulkanVersion);
+    Instance(const std::vector<const char*>& validationLayers, uint32_t vulkanVersion);
     ~Instance();
 
     [[nodiscard]] std::vector<const char*> ValidationLayers() const

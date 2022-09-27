@@ -78,6 +78,15 @@
     <ClCompile Include="src\Vulkan\Instance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Vulkan\CommandPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vulkan\CommandBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vulkan\DeviceMemory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="scripts\build_shaders.bat">
@@ -170,6 +179,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Vulkan\WindowConfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vulkan\CommandPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vulkan\CommandBuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vulkan\DeviceMemory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

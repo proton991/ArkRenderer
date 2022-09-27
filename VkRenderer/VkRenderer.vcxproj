@@ -170,7 +170,10 @@
     <ClCompile Include="src\systems\PointLightSystem.cpp" />
     <ClCompile Include="src\systems\SimpleRenderSystem.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Vulkan\CommandBuffer.cpp" />
+    <ClCompile Include="src\Vulkan\CommandPool.cpp" />
     <ClCompile Include="src\Vulkan\DebugUtils.cpp" />
+    <ClCompile Include="src\Vulkan\DeviceMemory.cpp" />
     <ClCompile Include="src\Vulkan\Instance.cpp" />
     <ClCompile Include="src\Vulkan\Surface.cpp" />
     <ClCompile Include="src\Vulkan\Vulkan.cpp" />
@@ -212,7 +215,10 @@
     <ClInclude Include="src\systems\SimpleRenderSystem.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\Timer.hpp" />
+    <ClInclude Include="src\Vulkan\CommandBuffer.hpp" />
+    <ClInclude Include="src\Vulkan\CommandPool.hpp" />
     <ClInclude Include="src\Vulkan\DebugUtils.hpp" />
+    <ClInclude Include="src\Vulkan\DeviceMemory.hpp" />
     <ClInclude Include="src\Vulkan\Enumerate.hpp" />
     <ClInclude Include="src\Vulkan\Instance.hpp" />
     <ClInclude Include="src\Vulkan\Surface.hpp" />
